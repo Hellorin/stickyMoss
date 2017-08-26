@@ -1,7 +1,4 @@
 # stickyMoss
-JobFinding application using Spring boot
-
-# stickyMoss
 JobHunting is a REST API developed using the Spring framework that can be used to help and support the process of job hunting.
 
 ## Description
