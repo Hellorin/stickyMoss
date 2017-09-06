@@ -1,6 +1,5 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
-import com.hellorin.stickyMoss.facade.PrincipalSecurityHelper;
 import com.hellorin.stickyMoss.facade.jobHunting.exceptions.EntityNotFoundException;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
@@ -27,7 +26,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.net.URI;
-import java.security.Principal;
 
 
 /**
@@ -106,11 +104,9 @@ public class JobApplicationRestFacade {
     @DeleteMapping(path = "{id}",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     @ResponseBody
-    public ResponseEntity<JobApplicationDTO> archiveJobApplication(Principal principal, @PathVariable final Long id,
+    public ResponseEntity<JobApplicationDTO> archiveJobApplication(@AuthenticationPrincipal Applicant applicant, @PathVariable final Long id,
                                                                    @RequestParam(value="type") final JobApplicationStatusDTO archivingMode)
             throws EntityNotFoundException {
-        Applicant applicant = PrincipalSecurityHelper.extractUserDetails(Applicant.class, principal);
-
         JobApplicationStatus status;
         try {
              status = stickyMossOrikaMapper.getFacade().map(archivingMode, JobApplicationStatus.class);
