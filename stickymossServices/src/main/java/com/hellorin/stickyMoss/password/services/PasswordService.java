@@ -2,6 +2,9 @@ package com.hellorin.stickyMoss.password.services;
 
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -13,21 +16,13 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class PasswordService {
 
-    @Value("${encryption.salt}")
-    private String salt;
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     public String encode(final String plainPassword) {
-        try {
-            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
-
-            final String plainPassWithSalt = salt + plainPassword;
-            byte[] passBytes = plainPassWithSalt.getBytes();
-            byte[] passHash = sha256.digest(passBytes);
-
-            return new String(passHash, StandardCharsets.UTF_8);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        return passwordEncoder().encode(plainPassword);
     }
 
     public boolean verifyPassword(final String plainPassword, final Applicant applicant) throws NoSuchAlgorithmException {

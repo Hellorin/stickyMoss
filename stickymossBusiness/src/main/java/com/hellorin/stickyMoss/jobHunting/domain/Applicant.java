@@ -55,7 +55,7 @@ public class Applicant implements UserDetails {
     @NotEmpty
     private String email;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter
     private List<JobApplication> jobApplications = new ArrayList<>(0);
 

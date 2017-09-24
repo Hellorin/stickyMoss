@@ -6,52 +6,46 @@ import com.hellorin.stickyMoss.jobHunting.exceptions.JobApplicationNotFoundExcep
 import com.hellorin.stickyMoss.jobHunting.repositories.JobApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
+
 
 /**
  * Created by hellorin on 30.06.17.
  */
 @Service
 @Transactional
-@Validated
-public class JobApplicationService {
+public class JobApplicationService implements IJobApplicationService {
     @Autowired
     private JobApplicationRepository jobApplicationRepository;
 
-    public JobApplication newApplication(@Valid @NotNull final JobApplication jobApplication) {
+    @Override
+    public JobApplication newApplication(final JobApplication jobApplication) {
         return jobApplicationRepository.save(jobApplication);
     }
 
-    public JobApplication getApplication(@Valid @NotNull final Long id) {
-        Optional<JobApplication> maybeJobApplication = Optional.ofNullable(jobApplicationRepository.findOne(id));
-
-        if (maybeJobApplication.isPresent()) {
-            if (userIsAuthorized(maybeJobApplication.get())) {
-                return maybeJobApplication.get();
-            } else {
-                return null;
-            }
+    @Override
+    public JobApplication getApplication(final Long id, final String username) {
+        Optional<JobApplication> maybeJobApplication;
+        if (username == null) {
+            maybeJobApplication = Optional.ofNullable(jobApplicationRepository.findOne(id));
         } else {
-            throw new JobApplicationNotFoundException();
+            maybeJobApplication = Optional.ofNullable(jobApplicationRepository.getTheJobApplicationForGivenUser(id, username));
         }
+
+        return maybeJobApplication
+                .filter(this::userIsAuthorized)
+                .orElseThrow(JobApplicationNotFoundException::new);
     }
 
-    public JobApplication archiveApplication(@Valid @NotNull final Long id, @Valid @NotNull final JobApplicationStatus status) {
-        JobApplication jobApplication = this.getApplication(id);
+    @Override
+    public JobApplication archiveApplication(final Long id, final JobApplicationStatus status) {
+        Optional<JobApplication> jobApplication = Optional.ofNullable(this.getApplication(id, null));
 
-        if (userIsAuthorized(jobApplication)) {
-            jobApplication.setStatus(status);
+        jobApplication.filter(this::userIsAuthorized).ifPresent(application -> application.setStatus(status));
 
-            return jobApplication;
-        } else {
-            return null;
-        }
+        return jobApplication.orElse(null);
     }
 
     private boolean userIsAuthorized(final JobApplication jobApplication){

@@ -3,12 +3,11 @@ package com.hellorin.stickyMoss.jobHunting.services;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.exceptions.ApplicantNotFoundException;
 import com.hellorin.stickyMoss.jobHunting.repositories.ApplicantRepository;
+import com.hellorin.stickyMoss.password.services.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
@@ -18,46 +17,42 @@ import java.util.logging.Logger;
  * Created by hellorin on 04.07.17.
  */
 @Service
-@Validated
-public class ApplicantService implements UserDetailsService {
+@Transactional
+public class ApplicantService implements IApplicantService {
     static Logger logger = Logger.getLogger(ApplicantService.class.getName());
 
     @Autowired
     private ApplicantRepository applicantRepository;
 
+    @Autowired
+    private PasswordService passwordService;
+
+    @Override
     public Applicant addApplicant(final Applicant applicant) {
+        applicant.setEncPassword(passwordService.encode(applicant.getPassword()));
+
         return applicantRepository.save(applicant);
     }
 
+    @Override
     public Applicant getApplicant(final Long id) {
-        Applicant applicant = applicantRepository.findOne(id);
+        Optional<Applicant> applicant = Optional.ofNullable(applicantRepository.findOne(id));
 
-        if (applicant != null) {
-            return applicant;
-        } else {
-            throw new ApplicantNotFoundException("Applicant not found with id " + id);
-        }
+        return applicant.orElseThrow(() -> new ApplicantNotFoundException("Applicant not found with id " + id));
     }
 
-    @Transactional
+    @Override
     public void deleteApplicant(final Long id) {
-        Applicant applicant = applicantRepository.findOne(id);
+        Optional<Applicant> applicant = Optional.ofNullable(applicantRepository.findOne(id));
 
-        if (applicant != null) {
-            applicantRepository.delete(applicant);
-        } else {
-            throw new ApplicantNotFoundException("Applicant not found with id " + id);
-        }
+        applicantRepository.delete(
+                applicant.orElseThrow(() -> new ApplicantNotFoundException("Applicant not found with id " + id)));
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<Applicant> applicant = applicantRepository.findByEmail(email);
 
-        if (applicant.isPresent()) {
-            return applicant.get();
-        } else {
-            throw new ApplicantNotFoundException("Cannot find user with email " + email);
-        }
+        return applicant.orElseThrow(() -> new ApplicantNotFoundException("Cannot find user with email " + email));
     }
 }

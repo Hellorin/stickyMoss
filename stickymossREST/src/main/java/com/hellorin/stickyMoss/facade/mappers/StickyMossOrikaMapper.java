@@ -29,27 +29,26 @@ import java.util.function.Function;
 public class StickyMossOrikaMapper {
     private final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-    @Autowired
-    private PasswordService passwordService;
-
     public StickyMossOrikaMapper() throws NoSuchAlgorithmException {
-        mapperFactory.classMap(JobApplication.class, JobApplicationDTO.class).byDefault().register();
+        mapperFactory.classMap(JobApplication.class, JobApplicationDTO.class)
+                .byDefault()
+                .register();
 
-        mapperFactory.classMap(JobApplicationStatus.class, JobApplicationStatusDTO.class).byDefault().register();
+        mapperFactory.classMap(JobApplicationStatus.class, JobApplicationStatusDTO.class)
+                .byDefault()
+                .register();
 
-        mapperFactory.classMap(DocumentFileFormat.class, DocumentFileFormatDTO.class).byDefault().register();
+        mapperFactory.classMap(DocumentFileFormat.class, DocumentFileFormatDTO.class)
+                .byDefault()
+                .register();
 
         mapperFactory.classMap(CV.class, CVDTO.class)
                 .byDefault()
                 .register();
 
         mapperFactory.classMap(ApplicantDTO.class, Applicant.class)
-                .customize(new ApplicantMapper(new Function<String, String>() {
-                    @Override
-                    public String apply(String s) {
-                        return passwordService.encode(s);
-                    }
-                }))
+                .field("plainPassword", "encPassword")
+                .byDefault()
                 .register();
 
     }

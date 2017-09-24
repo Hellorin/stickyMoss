@@ -1,6 +1,6 @@
 package com.hellorin.stickyMoss.facade.documents.controllers;
 
-import com.hellorin.stickyMoss.StickyMossApplication;
+import com.hellorin.stickyMoss.TestStickyMossConfiguration;
 import com.hellorin.stickyMoss.documents.dtos.CVDTO;
 import com.hellorin.stickyMoss.documents.dtos.DocumentFileFormatDTO;
 import com.hellorin.stickyMoss.documents.repositories.CVRepository;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {StickyMossApplication.class})
+@ContextConfiguration(classes = {TestStickyMossConfiguration.class})
 @AutoConfigureMockMvc
 public class DocumentsRestFacadeTest extends AbstractRestControllerTest {
 

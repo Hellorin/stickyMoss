@@ -1,6 +1,6 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
-import com.hellorin.stickyMoss.StickyMossApplication;
+import com.hellorin.stickyMoss.TestStickyMossConfiguration;
 import com.hellorin.stickyMoss.facade.AbstractRestControllerTest;
 import com.hellorin.stickyMoss.facade.security.configuration.CustomWebSecurityConfigurerAdapter;
 import com.hellorin.stickyMoss.facade.security.configuration.WebSecurityConfiguration;
@@ -16,6 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -27,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {StickyMossApplication.class,
+@ContextConfiguration(classes = {TestStickyMossConfiguration.class,
         WebSecurityConfiguration.class, CustomWebSecurityConfigurerAdapter.class,
         ValidatorsConfiguration.class})
 @AutoConfigureMockMvc
@@ -65,6 +67,7 @@ public class ApplicantRestFacadeTest extends AbstractRestControllerTest {
     }
 
     @Test
+    @WithMockUser(roles="ADMIN")
     public void testNewApplicant() throws Exception {
         ApplicantDTO applicantDTO = new ApplicantDTO();
         applicantDTO.setFirstname("Jim");
@@ -80,6 +83,7 @@ public class ApplicantRestFacadeTest extends AbstractRestControllerTest {
     }
 
     @Test
+    @WithMockUser(roles="ADMIN")
     public void testDeleteApplicantNotExisting() throws Exception {
         mvc.perform(
                 MockMvcRequestBuilders.delete(baseUrl + "/" + applicant.getId()+1)
@@ -87,6 +91,7 @@ public class ApplicantRestFacadeTest extends AbstractRestControllerTest {
     }
 
     @Test
+    @WithMockUser(roles="ADMIN")
     public void testDeleteApplicantExisting() throws Exception {
         mvc.perform(
                 MockMvcRequestBuilders.delete(baseUrl + "/" + applicant.getId())

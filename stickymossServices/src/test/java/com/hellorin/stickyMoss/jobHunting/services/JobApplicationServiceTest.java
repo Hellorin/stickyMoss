@@ -8,12 +8,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
+
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -25,22 +29,16 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration
 public class JobApplicationServiceTest {
 
-    @Configuration
+    @TestConfiguration
     static class JobApplicationServiceTestContextConfiguration {
         @Bean
-        public JobApplicationService jobApplicationService() {
+        public IJobApplicationService jobApplicationService() {
             return new JobApplicationService();
-        }
-
-        @Bean
-        public JobApplicationRepository jobApplicationRepository() {
-            return mock(JobApplicationRepository.class);
         }
 
         @Bean
         public LocalValidatorFactoryBean validator() {
             final LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
-
             return localValidatorFactoryBean;
         }
 
@@ -54,9 +52,9 @@ public class JobApplicationServiceTest {
     }
 
     @Autowired
-    private JobApplicationService jobApplicationService;
+    private IJobApplicationService jobApplicationService;
 
-    @Autowired
+    @MockBean
     private JobApplicationRepository jobApplicationRepository;
 
     @Before
@@ -73,7 +71,9 @@ public class JobApplicationServiceTest {
     public void testNewApplication() {
         // Given
         JobApplication jobApplicationBeforeSaving = mock(JobApplication.class);
+        when(jobApplicationBeforeSaving.getDateSubmitted()).thenReturn(new Date());
         JobApplication jobApplicationAfterSaving = mock(JobApplication.class);
+        when(jobApplicationAfterSaving.getDateSubmitted()).thenReturn(new Date());
         when(jobApplicationRepository.save(jobApplicationBeforeSaving)).thenReturn(jobApplicationAfterSaving);
 
         // When
@@ -87,7 +87,7 @@ public class JobApplicationServiceTest {
 
     @Test(expected = MethodConstraintViolationException.class)
     public void testGetApplicationNull() {
-        jobApplicationService.getApplication(null);
+        jobApplicationService.getApplication(null, null);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class JobApplicationServiceTest {
         when(jobApplicationRepository.findOne(1L)).thenReturn(jobApplicationReturned);
 
         // When
-        JobApplication jobApplication = jobApplicationService.getApplication(1L);
+        JobApplication jobApplication = jobApplicationService.getApplication(1L, null);
 
         // Then
         assertEquals(jobApplicationReturned, jobApplication);
@@ -110,7 +110,21 @@ public class JobApplicationServiceTest {
         doReturn(null).when(jobApplicationRepository).findOne(1L);
 
         // When
-        jobApplicationService.getApplication(1L);
+        jobApplicationService.getApplication(1L, null);
+    }
+
+    @Test
+    public void testGetApplicationForGivenUserEmail() {
+        // Given
+        JobApplication jobApplicationReturned = mock(JobApplication.class);
+        when(jobApplicationRepository.getTheJobApplicationForGivenUser(1L, "email@email.com")).thenReturn(jobApplicationReturned);
+
+        // When
+        JobApplication jobApplication = jobApplicationService.getApplication(1L, "email@email.com");
+
+        // Then
+        assertEquals(jobApplicationReturned, jobApplication);
+        verify(jobApplicationRepository, times(1)).getTheJobApplicationForGivenUser(1L, "email@email.com");
     }
 
     /*@Test

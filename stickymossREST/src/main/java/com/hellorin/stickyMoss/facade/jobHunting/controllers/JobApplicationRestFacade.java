@@ -1,17 +1,13 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
-import com.hellorin.stickyMoss.facade.jobHunting.exceptions.EntityNotFoundException;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
 import com.hellorin.stickyMoss.facade.mappers.StickyMossOrikaMapper;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplicationStatus;
 import com.hellorin.stickyMoss.jobHunting.dtos.JobApplicationDTO;
 import com.hellorin.stickyMoss.jobHunting.dtos.JobApplicationStatusDTO;
-import com.hellorin.stickyMoss.jobHunting.exceptions.ApplicantNotFoundException;
-import com.hellorin.stickyMoss.jobHunting.exceptions.JobApplicationNotFoundException;
-import com.hellorin.stickyMoss.jobHunting.services.ApplicantService;
-import com.hellorin.stickyMoss.jobHunting.services.JobApplicationService;
-import org.hibernate.validator.method.MethodConstraintViolationException;
+import com.hellorin.stickyMoss.jobHunting.services.IApplicantService;
+import com.hellorin.stickyMoss.jobHunting.services.IJobApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +27,6 @@ import java.net.URI;
 /**
  * Created by hellorin on 30.06.17.
  */
-
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @RestController
@@ -46,10 +41,10 @@ import java.net.URI;
 public class JobApplicationRestFacade {
 
     @Autowired
-    private JobApplicationService jobApplicationService;
+    private IJobApplicationService jobApplicationService;
 
     @Autowired
-    private ApplicantService applicantService;
+    private IApplicantService applicantService;
 
     @Autowired
     private StickyMossOrikaMapper stickyMossOrikaMapper;
@@ -58,70 +53,46 @@ public class JobApplicationRestFacade {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<JobApplicationDTO> getJobApplication (@AuthenticationPrincipal Applicant applicant, @PathVariable final Long id) throws EntityNotFoundException {
-        try {
-            JobApplication jobApplication = jobApplicationService.getApplication(id);
+    public ResponseEntity<JobApplicationDTO> getJobApplication (@AuthenticationPrincipal final Applicant applicant,
+                                                                @PathVariable final Long id) {
+        JobApplication jobApplication = jobApplicationService.getApplication(id, null);
 
-            return ResponseEntity.ok(stickyMossOrikaMapper.getFacade().map(jobApplication, JobApplicationDTO.class));
-
-        } catch (JobApplicationNotFoundException exception) {
-            throw new EntityNotFoundException();
-        }
+        return ResponseEntity.ok(stickyMossOrikaMapper.getFacade().map(jobApplication, JobApplicationDTO.class));
     }
 
     @PutMapping(
             consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE},
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     @ResponseBody
-    public ResponseEntity<?> newJobApplication(@AuthenticationPrincipal Applicant applicant, @RequestBody final JobApplicationDTO jobApplicationDTO) throws EntityNotFoundException {
-        try {
-            JobApplication jobApplication;
-            try {
-                jobApplication = stickyMossOrikaMapper.getFacade().map(jobApplicationDTO, JobApplication.class);
-            } catch (NullPointerException exp){
-                return ResponseEntity.badRequest().build();
-            }
+    public ResponseEntity<?> newJobApplication(@AuthenticationPrincipal final Applicant applicant,
+                                               @RequestBody final JobApplicationDTO jobApplicationDTO) {
+        JobApplication jobApplication = stickyMossOrikaMapper.getFacade().map(jobApplicationDTO, JobApplication.class);
 
-            jobApplication.setApplicant(applicant);
+        jobApplication.setApplicant(applicant);
+        JobApplication jobApplicationCreated = jobApplicationService.newApplication(jobApplication);
 
-            JobApplication jobApplicationCreated = jobApplicationService.newApplication(jobApplication);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(jobApplicationCreated.getId()).toUri();
 
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(jobApplicationCreated.getId()).toUri();
+        JobApplicationDTO dto = stickyMossOrikaMapper.getFacade().map(jobApplicationCreated, JobApplicationDTO.class);
 
-            JobApplicationDTO dto = stickyMossOrikaMapper.getFacade().map(jobApplicationCreated, JobApplicationDTO.class);
-
-            return ResponseEntity.created(location).build();
-
-        } catch (MethodConstraintViolationException excp1) {
-            return ResponseEntity.badRequest().build();
-        } catch (ApplicantNotFoundException excp2) {
-            throw new EntityNotFoundException();
-        }
+        return ResponseEntity.created(location).build();
     }
 
     @DeleteMapping(path = "{id}",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     @ResponseBody
-    public ResponseEntity<JobApplicationDTO> archiveJobApplication(@AuthenticationPrincipal Applicant applicant, @PathVariable final Long id,
-                                                                   @RequestParam(value="type") final JobApplicationStatusDTO archivingMode)
-            throws EntityNotFoundException {
-        JobApplicationStatus status;
-        try {
-             status = stickyMossOrikaMapper.getFacade().map(archivingMode, JobApplicationStatus.class);
-        } catch (NullPointerException excp) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<JobApplicationDTO> archiveJobApplication(@AuthenticationPrincipal final Applicant applicant,
+                                                                   @PathVariable final Long id,
+                                                                   @RequestParam(value="type") final JobApplicationStatusDTO archivingMode) {
+        JobApplicationStatus status = stickyMossOrikaMapper.getFacade().map(archivingMode, JobApplicationStatus.class);
 
-        try {
-            JobApplication archivedJobApplication = jobApplicationService.archiveApplication(id, status);
+        JobApplication archivedJobApplication = jobApplicationService.archiveApplication(id, status);
 
-            return ResponseEntity.ok(stickyMossOrikaMapper.getFacade().map(archivedJobApplication, JobApplicationDTO.class));
-        } catch (JobApplicationNotFoundException exception) {
-            throw new EntityNotFoundException();
-        }
+        JobApplicationDTO dto = stickyMossOrikaMapper.getFacade().map(archivedJobApplication, JobApplicationDTO.class);
 
+        return ResponseEntity.ok(dto);
     }
 
 }

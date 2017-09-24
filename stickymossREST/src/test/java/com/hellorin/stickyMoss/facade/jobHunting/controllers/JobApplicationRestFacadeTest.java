@@ -1,16 +1,14 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
-import com.hellorin.stickyMoss.StickyMossApplication;
+import com.hellorin.stickyMoss.TestStickyMossConfiguration;
 import com.hellorin.stickyMoss.facade.AbstractRestControllerTest;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
 import com.hellorin.stickyMoss.jobHunting.dtos.JobApplicationDTO;
 import com.hellorin.stickyMoss.jobHunting.dtos.JobApplicationStatusDTO;
-import com.hellorin.stickyMoss.jobHunting.exceptions.ApplicantNotFoundException;
 import com.hellorin.stickyMoss.jobHunting.repositories.ApplicantRepository;
 import com.hellorin.stickyMoss.jobHunting.repositories.JobApplicationRepository;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = {StickyMossApplication.class})
+@ContextConfiguration(classes = {TestStickyMossConfiguration.class})
 @AutoConfigureMockMvc
 public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
 
@@ -52,7 +50,6 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
     @Before
     public void setup() throws Exception {
         jobApplicationRepository.deleteAllInBatch();
-        //applicantRepository.deleteAllInBatch();
 
         applicant = applicantRepository.save(new Applicant("firstname","lastname", "encPassword", "email"));
 
@@ -91,13 +88,12 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
 
     @Test
     @WithUserDetails("email@email.com")
-    @Ignore
     public void testNewJobApplication() throws Exception {
         JobApplicationDTO jobApplicationDTO = new JobApplicationDTO();
         jobApplicationDTO.setDateSubmitted(new Date());
 
         mvc.perform(
-                MockMvcRequestBuilders.put(baseUrl + "/" + (applicant.getId()))
+                MockMvcRequestBuilders.put(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(jobApplicationDTO)))
                 .andExpect(status().isCreated());
@@ -113,34 +109,6 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(jobApplicationDTO)))
                 .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @WithUserDetails("email2@email.com")
-    @Ignore
-    public void testNewJobApplicationWithUnknownApplicant() throws Exception {
-        JobApplicationDTO jobApplicationDTO = new JobApplicationDTO();
-        jobApplicationDTO.setDateSubmitted(new Date());
-
-        mvc.perform(
-                MockMvcRequestBuilders.put(baseUrl + "/" + (applicant.getId()-1))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(jobApplicationDTO)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @WithUserDetails("email@email.com")
-    @Ignore
-    public void testNewJobApplicationWithBadFormat() throws Exception {
-        JobApplicationDTO jobApplicationDTO = new JobApplicationDTO();
-        jobApplicationDTO.setDateSubmitted(null);
-
-        mvc.perform(
-                MockMvcRequestBuilders.put(baseUrl + "/" + applicant.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(jobApplicationDTO)))
-                .andExpect(status().isBadRequest());
     }
 
     @Test

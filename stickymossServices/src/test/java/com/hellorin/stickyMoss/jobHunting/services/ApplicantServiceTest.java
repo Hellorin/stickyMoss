@@ -1,18 +1,22 @@
 package com.hellorin.stickyMoss.jobHunting.services;
 
-import com.hellorin.stickyMoss.documents.services.AbstractDocumentService;
-import com.hellorin.stickyMoss.documents.services.CVDocumentService;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.documents.factories.DocumentServicesFactory;
 import com.hellorin.stickyMoss.jobHunting.exceptions.ApplicantNotFoundException;
 import com.hellorin.stickyMoss.jobHunting.repositories.ApplicantRepository;
+import com.hellorin.stickyMoss.password.services.PasswordService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -26,48 +30,53 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
+@MockBean(DocumentServicesFactory.class)
 public class ApplicantServiceTest {
-    @Configuration
+
+    @TestConfiguration
+    @EnableGlobalMethodSecurity(securedEnabled =  true, prePostEnabled = true)
     static class ApplicantServiceTestContextConfiguration {
         @Bean
-        public ApplicantService applicantService() {
+        public IApplicantService applicantService() {
             return new ApplicantService();
-        }
-
-        @Bean
-        public ApplicantRepository applicantRepository() {
-            return mock(ApplicantRepository.class);
-        }
-
-        @Bean
-        public DocumentServicesFactory documentServicesFactory() {
-            return mock(DocumentServicesFactory.class);
-        }
-
-        @Bean
-        public AbstractDocumentService[] documentServices() {
-            return new AbstractDocumentService[]{new CVDocumentService()};
         }
     }
 
     @Autowired
-    private ApplicantService applicantService;
+    private IApplicantService applicantService;
 
-    @Autowired
-    private ApplicantRepository applicantRepository;
+    @MockBean
+    public ApplicantRepository applicantRepository;
 
-    @Autowired
-    private DocumentServicesFactory documentServicesFactory;
-
-    @Autowired
-    private AbstractDocumentService[] documentServices;
+    @MockBean
+    public PasswordService passwordService;
 
     @Before
     public void setup() {
         Mockito.reset(applicantRepository);
     }
 
+    @Test(expected = AuthenticationCredentialsNotFoundException.class)
+    public void testAddApplicantWithoutAuthentification() {
+        // Given
+        Applicant newApplicant = mock(Applicant.class);
+
+        // When
+        Applicant observedReturnedApplicant = applicantService.addApplicant(newApplicant);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    @WithMockUser(roles={"USER"})
+    public void testAddApplicantWithUnauthorizedRole() {
+        // Given
+        Applicant newApplicant = mock(Applicant.class);
+
+        // When
+        Applicant observedReturnedApplicant = applicantService.addApplicant(newApplicant);
+    }
+
     @Test
+    @WithMockUser(roles={"ADMIN"})
     public void testAddApplicant() {
         // Given
         Applicant newApplicant = mock(Applicant.class);
@@ -121,6 +130,28 @@ public class ApplicantServiceTest {
         verify(applicantRepository, times(1)).findOne(1L);
     }
 
+    @Test(expected = AccessDeniedException.class)
+    @WithMockUser(roles={"USER"})
+    public void testDeleteExistingApplicantByIdWithWrongRole() {
+        // When
+        applicantService.deleteApplicant(1L);
+    }
+
+    @Test
+    @WithMockUser(roles={"ADMIN"})
+    public void testDeleteExistingApplicantById() {
+        // Given
+        Applicant applicant = mock(Applicant.class);
+        when(applicant.getId()).thenReturn(1L);
+        when(applicantRepository.findOne(1L)).thenReturn(applicant);
+
+        // When
+        applicantService.deleteApplicant(1L);
+
+        // Then
+        verify(applicantRepository, times(1)).findOne(1L);
+    }
+
     @Test(expected = ApplicantNotFoundException.class)
     public void testGetInexistingApplicantById() {
         // Given
@@ -136,27 +167,14 @@ public class ApplicantServiceTest {
 
         // When
         applicantService.getApplicant(1L);
-        verify(applicantRepository, times(1)).findOne(1L);
-        // Then
-
-
-    }
-
-    @Test
-    public void testDeleteExistingApplicantById() {
-        // Given
-        Applicant applicant = mock(Applicant.class);
-        when(applicant.getId()).thenReturn(1L);
-        when(applicantRepository.findOne(1L)).thenReturn(applicant);
-
-        // When
-        applicantService.deleteApplicant(1L);
 
         // Then
         verify(applicantRepository, times(1)).findOne(1L);
+
     }
 
     @Test(expected = ApplicantNotFoundException.class)
+    @WithMockUser(roles={"ADMIN"})
     public void testDeleteInexistingApplicantById() {
         // Given
         Applicant applicant = mock(Applicant.class);

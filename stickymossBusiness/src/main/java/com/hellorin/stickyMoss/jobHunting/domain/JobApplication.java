@@ -1,8 +1,12 @@
 package com.hellorin.stickyMoss.jobHunting.domain;
 
 import lombok.*;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -28,7 +32,6 @@ public class JobApplication {
 
     @Getter
     @Setter
-    @NonNull
     @Temporal(TemporalType.DATE)
     private Date dateSubmitted;
 

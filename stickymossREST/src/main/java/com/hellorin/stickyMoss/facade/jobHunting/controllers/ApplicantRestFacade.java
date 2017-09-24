@@ -1,11 +1,9 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
-import com.hellorin.stickyMoss.facade.jobHunting.exceptions.EntityNotFoundException;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.facade.mappers.StickyMossOrikaMapper;
 import com.hellorin.stickyMoss.jobHunting.dtos.ApplicantDTO;
-import com.hellorin.stickyMoss.jobHunting.exceptions.ApplicantNotFoundException;
-import com.hellorin.stickyMoss.jobHunting.services.ApplicantService;
+import com.hellorin.stickyMoss.jobHunting.services.IApplicantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
@@ -36,7 +34,7 @@ import java.net.URI;
 public class ApplicantRestFacade {
 
     @Autowired
-    private ApplicantService applicantService;
+    private IApplicantService applicantService;
 
     @Autowired
     private StickyMossOrikaMapper mapper;
@@ -58,23 +56,15 @@ public class ApplicantRestFacade {
     @GetMapping(path = "{id}",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     @ResponseBody
-    private ResponseEntity<ApplicantDTO> getApplicant(@PathVariable final Long id) throws EntityNotFoundException {
-        try {
-            Applicant returnedApplicant = applicantService.getApplicant(id);
+    private ResponseEntity<ApplicantDTO> getApplicant(@PathVariable final Long id) {
+        Applicant returnedApplicant = applicantService.getApplicant(id);
 
-            return ResponseEntity.ok(mapper.getFacade().map(returnedApplicant, ApplicantDTO.class));
-        } catch (ApplicantNotFoundException exception) {
-            throw new EntityNotFoundException();
-        }
+        return ResponseEntity.ok(mapper.getFacade().map(returnedApplicant, ApplicantDTO.class));
     }
 
     @DeleteMapping(path = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    private void deleteApplicant (@PathVariable final Long id) throws EntityNotFoundException {
-        try {
-            applicantService.deleteApplicant(id);
-        } catch (ApplicantNotFoundException exception) {
-            throw new EntityNotFoundException();
-        }
+    private void deleteApplicant (@PathVariable final Long id) {
+        applicantService.deleteApplicant(id);
     }
 }
