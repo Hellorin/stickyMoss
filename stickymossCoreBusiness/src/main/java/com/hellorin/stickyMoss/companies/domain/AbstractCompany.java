@@ -2,10 +2,7 @@ package com.hellorin.stickyMoss.companies.domain;
 
 import lombok.*;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -13,7 +10,9 @@ import javax.validation.constraints.NotNull;
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(exclude = {"version", "id"})
-@MappedSuperclass
+@Entity(name = "ABSTRACT_COMPANIES")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "companyType")
 public abstract class AbstractCompany {
     @Version
     private Long version;
