@@ -1,6 +1,7 @@
 package com.hellorin.stickyMoss.documents.domain;
 
 import lombok.*;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ public abstract class Document {
     @Getter
     @Setter
     @NotNull
+    @NotEmpty
     private String name;
 
     @Getter
@@ -43,20 +45,16 @@ public abstract class Document {
     @NotNull
     private Date dateUploaded;
 
-    public Document(@NonNull final String name,
+    public Document(@NonNull @NotEmpty final String name,
                     @NonNull final DocumentFileFormat format,
                     @NonNull final byte[] content) {
-        if (!name.isEmpty()) {
-            if (content.length > 0) {
-                this.name = name;
-                this.format = format;
-                this.content = content;
-                this.dateUploaded = new Date();
-            } else {
-                throw new IllegalArgumentException("Content of the file cannot be empty");
-            }
+        if (content.length > 0) {
+            this.name = name;
+            this.format = format;
+            this.content = content;
+            this.dateUploaded = new Date();
         } else {
-            throw new IllegalArgumentException("Name of the file cannot be empty");
+            throw new IllegalArgumentException("Content of the file cannot be empty");
         }
     }
 }

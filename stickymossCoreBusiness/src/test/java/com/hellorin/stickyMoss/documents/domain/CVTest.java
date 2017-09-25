@@ -2,9 +2,12 @@ package com.hellorin.stickyMoss.documents.domain;
 
 import com.hellorin.stickyMoss.classification.domain.Tag;
 import org.assertj.core.util.Sets;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +17,8 @@ import static org.junit.Assert.*;
 /**
  * Created by hellorin on 25.06.17.
  */
-@RunWith(JUnit4.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration
 public class CVTest {
 
     @Test(expected = NullPointerException.class)
@@ -23,6 +27,7 @@ public class CVTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    @Ignore
     public void testConstructorEmptyName() {
         new CV("", DocumentFileFormat.PDF, new byte[5], Sets.newHashSet());
     }
