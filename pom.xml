@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>stickyMossBusiness</module>
+        <module>stickyMossCoreBusiness</module>
         <module>stickyMossCoreServices</module>
         <module>stickyMossCoreREST</module>
 		<module>stickyMossCoreAPI</module>
