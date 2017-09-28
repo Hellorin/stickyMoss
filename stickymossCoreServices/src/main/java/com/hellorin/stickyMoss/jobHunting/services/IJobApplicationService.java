@@ -5,7 +5,6 @@ import com.hellorin.stickyMoss.jobHunting.domain.JobApplicationStatus;
 
 import org.springframework.validation.annotation.Validated;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 

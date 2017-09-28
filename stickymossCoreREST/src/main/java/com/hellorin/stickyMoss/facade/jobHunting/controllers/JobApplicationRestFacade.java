@@ -1,5 +1,6 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
+import com.hellorin.stickyMoss.StickyMossDTO;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
 import com.hellorin.stickyMoss.facade.mappers.StickyMossOrikaMapper;
@@ -74,8 +75,6 @@ public class JobApplicationRestFacade {
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(jobApplicationCreated.getId()).toUri();
-
-        JobApplicationDTO dto = stickyMossOrikaMapper.getFacade().map(jobApplicationCreated, JobApplicationDTO.class);
 
         return ResponseEntity.created(location).build();
     }

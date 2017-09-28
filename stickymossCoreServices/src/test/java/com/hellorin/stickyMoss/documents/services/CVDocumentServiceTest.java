@@ -2,6 +2,7 @@ package com.hellorin.stickyMoss.documents.services;
 
 import com.hellorin.stickyMoss.documents.domain.CV;
 import com.hellorin.stickyMoss.documents.repositories.CVRepository;
+import com.hellorin.stickyMoss.documents.repositories.DocumentRepository;
 import com.hellorin.stickyMoss.jobHunting.repositories.ApplicantRepository;
 import com.hellorin.stickyMoss.jobHunting.services.ApplicantService;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.yaml.snakeyaml.events.Event;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -34,8 +36,11 @@ public class CVDocumentServiceTest {
         }
     }
 
+
     @Autowired
     private CVDocumentService cvDocumentService;
+
+
 
     @Test
     public void testGetType() {

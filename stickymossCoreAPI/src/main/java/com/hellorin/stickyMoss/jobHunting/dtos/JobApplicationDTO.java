@@ -1,5 +1,6 @@
 package com.hellorin.stickyMoss.jobHunting.dtos;
 
+import com.hellorin.stickyMoss.StickyMossDTO;
 import com.hellorin.stickyMoss.documents.dtos.CVDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.Date;
  */
 @Data
 @NoArgsConstructor
-public class JobApplicationDTO {
+public class JobApplicationDTO extends StickyMossDTO {
     private Long id;
 
     private Date dateSubmitted;

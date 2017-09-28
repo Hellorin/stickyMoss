@@ -2,6 +2,7 @@ package com.hellorin.stickyMoss.documents.domain;
 
 import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.core.io.Resource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,9 +11,12 @@ import java.util.Date;
 /**
  * Created by hellorin on 23.06.17.
  */
+@Entity(name = "Documents")
+@Table(name = "Documents")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "docType")
 @EqualsAndHashCode(exclude = {"version", "id"})
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-@MappedSuperclass
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class Document {
     @Version
     private Long version;
@@ -57,4 +61,6 @@ public abstract class Document {
             throw new IllegalArgumentException("Content of the file cannot be empty");
         }
     }
+
+    abstract public void accept(DocumentVisitor documentVisitor);
 }

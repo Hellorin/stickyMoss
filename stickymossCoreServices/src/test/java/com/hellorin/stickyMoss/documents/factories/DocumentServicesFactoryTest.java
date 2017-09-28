@@ -1,12 +1,17 @@
 package com.hellorin.stickyMoss.documents.factories;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
+import com.hellorin.stickyMoss.documents.DocumentsFactory;
 import com.hellorin.stickyMoss.documents.exceptions.UnsupportedFileFormatException;
+import com.hellorin.stickyMoss.documents.repositories.DocumentRepository;
 import com.hellorin.stickyMoss.documents.services.AbstractDocumentService;
 import com.hellorin.stickyMoss.documents.services.CVDocumentService;
+import com.hellorin.stickyMoss.documents.services.GenericDocumentService;
+import com.hellorin.stickyMoss.documents.services.IGenericDocumentService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,17 +36,36 @@ public class DocumentServicesFactoryTest {
         }
 
         @Bean
+        public DocumentsFactory documentsFactory() {
+            return new DocumentsFactory();
+        }
+
+        @Bean
         public AbstractDocumentService[] abstractDocumentServices() {
             return new AbstractDocumentService[]{new CVDocumentService()};
+        }
+
+        @Bean
+        public IGenericDocumentService genericDocumentService() {
+            return new GenericDocumentService();
         }
     }
 
     @Autowired
     private DocumentServicesFactory documentServicesFactory;
 
+    @Autowired
+    private IGenericDocumentService genericDocumentService;
+
+    @Autowired
+    private DocumentsFactory documentsFactory;
+
+    @MockBean
+    private DocumentRepository documentRepository;
+
     @Test
     public void testGetCVservice() {
-        AbstractDocumentService service = documentServicesFactory.getServiceByDocumentType("CV", false);
+        AbstractDocumentService service = documentServicesFactory.getServiceByDocumentType("CV");
 
         assertNotNull(service);
         assertTrue(service instanceof CVDocumentService);
@@ -50,15 +74,10 @@ public class DocumentServicesFactoryTest {
 
         assertNotNull(service2);
         assertTrue(service2 instanceof CVDocumentService);
-
-        AbstractDocumentService service3 = documentServicesFactory.getServiceByDocumentType("CVDTO", true);
-
-        assertNotNull(service3);
-        assertTrue(service3 instanceof CVDocumentService);
     }
 
     @Test(expected = UnsupportedFileFormatException.class)
     public void testGetUnknownService() {
-        documentServicesFactory.getServiceByDocumentType("MotivationLetter", false);
+        documentServicesFactory.getServiceByDocumentType("MotivationLetter");
     }
 }

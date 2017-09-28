@@ -1,10 +1,9 @@
 package com.hellorin.stickyMoss.facade.mappers;
 
 
-import com.hellorin.stickyMoss.documents.domain.Document;
 import com.hellorin.stickyMoss.documents.domain.DocumentFileFormat;
 import com.hellorin.stickyMoss.documents.dtos.CVDTO;
-import com.hellorin.stickyMoss.documents.dtos.DocumentDTO;
+
 import com.hellorin.stickyMoss.documents.dtos.DocumentFileFormatDTO;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
@@ -13,14 +12,11 @@ import com.hellorin.stickyMoss.jobHunting.domain.JobApplicationStatus;
 import com.hellorin.stickyMoss.jobHunting.dtos.ApplicantDTO;
 import com.hellorin.stickyMoss.jobHunting.dtos.JobApplicationDTO;
 import com.hellorin.stickyMoss.jobHunting.dtos.JobApplicationStatusDTO;
-import com.hellorin.stickyMoss.password.services.PasswordService;
 import ma.glasnost.orika.*;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.function.Function;
 
 /**
  * Created by hellorin on 26/05/17.
@@ -53,7 +49,7 @@ public class StickyMossOrikaMapper {
 
     }
 
-    public MapperFacade getFacade() {
-        return mapperFactory.getMapperFacade();
+    public StickyMossMapperFacade getFacade() {
+        return StickyMossMapperFacade.getInstance(mapperFactory.getMapperFacade());
     }
 }

@@ -22,12 +22,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
         "com.hellorin.stickyMoss.documents.domain",
         "com.hellorin.stickyMoss.companies.domain",
         "com.hellorin.stickyMoss.classification.domain",
-        "com.hellorin.stickyMoss.translation.domain",
 })
 @EnableJpaRepositories(basePackages = {
         "com.hellorin.stickyMoss.jobHunting.repositories",
         "com.hellorin.stickyMoss.documents.repositories",
-        "com.hellorin.stickyMoss.translation.repositories"
 })
 @EnableAsync
 @EnableScheduling
@@ -45,6 +43,7 @@ public class TestStickyMossConfiguration extends WebMvcConfigurerAdapter {
     public ApplicantRestFacade applicantRestFacade() {
         return new ApplicantRestFacade();
     }
+
 
 }
 

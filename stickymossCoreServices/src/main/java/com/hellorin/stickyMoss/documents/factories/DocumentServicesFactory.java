@@ -2,6 +2,7 @@ package com.hellorin.stickyMoss.documents.factories;
 
 import com.hellorin.stickyMoss.documents.exceptions.UnsupportedFileFormatException;
 import com.hellorin.stickyMoss.documents.services.AbstractDocumentService;
+import com.hellorin.stickyMoss.documents.services.IGenericDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
@@ -9,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -36,20 +38,10 @@ public class DocumentServicesFactory {
         logger.info("Loaded the following documentServices: (" + documentsServiceListStr + ")");
     }
 
-    public AbstractDocumentService getServiceByDocumentType(@Valid final String documentType) {
-        return getServiceByDocumentType(documentType, false);
-    }
-
-    public AbstractDocumentService getServiceByDocumentType(final @Valid String documentType, final boolean isDTO) {
+    public AbstractDocumentService getServiceByDocumentType(final @Valid String documentType) {
         Optional<AbstractDocumentService> documentService = Arrays.asList(documentServices).stream()
-                .filter(service -> {
-                    String serviceDocumentType = documentType;
-                    if (isDTO) {
-                        serviceDocumentType = serviceDocumentType.substring(0, serviceDocumentType.length()-3);
-                    }
-
-                    return serviceDocumentType.equals(service.getType().getSimpleName());
-                }).findFirst();
+                .filter(service -> documentType.equals(service.getType().getSimpleName()))
+                .findFirst();
 
         if (documentService.isPresent()) {
             return documentService.get();
@@ -58,4 +50,7 @@ public class DocumentServicesFactory {
         }
     }
 
+    public List<AbstractDocumentService> getAllSpecificDocumentServices() {
+        return Arrays.asList(documentServices);
+    }
 }

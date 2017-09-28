@@ -1,5 +1,6 @@
 package com.hellorin.stickyMoss.jobHunting.dtos;
 
+import com.hellorin.stickyMoss.StickyMossDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class ApplicantDTO {
+public class ApplicantDTO extends StickyMossDTO {
 
     private Long id;
 

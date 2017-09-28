@@ -1,10 +1,12 @@
 package com.hellorin.stickyMoss.facade.documents.controllers;
 
 import com.hellorin.stickyMoss.TestStickyMossConfiguration;
-import com.hellorin.stickyMoss.documents.dtos.CVDTO;
-import com.hellorin.stickyMoss.documents.dtos.DocumentFileFormatDTO;
+import com.hellorin.stickyMoss.documents.domain.CV;
+import com.hellorin.stickyMoss.documents.domain.Document;
+import com.hellorin.stickyMoss.documents.domain.DocumentFileFormat;
 import com.hellorin.stickyMoss.documents.repositories.CVRepository;
 import com.hellorin.stickyMoss.facade.AbstractRestControllerTest;
+import org.apache.tika.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,15 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Date;
+import java.io.InputStream;
 
-import static org.hamcrest.CoreMatchers.anything;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -37,29 +39,36 @@ public class DocumentsRestFacadeTest extends AbstractRestControllerTest {
 
     private String baseUrl;
 
+    private Document document;
+
     @Before
     public void setup() throws Exception {
         cvRepository.deleteAllInBatch();
+
+        byte[] data = "Hello world".getBytes();
+
+        document = cvRepository.save(new CV("file.pdf",
+            DocumentFileFormat.PDF,
+                data));
 
         baseUrl = "/" + AbstractRestControllerTest.getRestControllerBaseURL(DocumentsRestFacadeController.class);
     }
 
     @Test
-    public void testCreateNewCV() throws Exception {
-        CVDTO cvdto = new CVDTO();
-        cvdto.setName("file1");
-        cvdto.setContent(new byte[]{0});
-        cvdto.setFormat(DocumentFileFormatDTO.PDF);
-        cvdto.setDateUploaded(new Date());
+    public void testCreateCVinPDF() throws Exception {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream is = classloader.getResourceAsStream("cv.pdf");
 
-        mvc.perform(
-                MockMvcRequestBuilders.put(baseUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(cvdto)))
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                    .andExpect(jsonPath("$.id", anything()));
-
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.pdf",
+                MediaType.APPLICATION_PDF_VALUE, IOUtils.toByteArray(is));
+        mvc.perform(fileUpload(baseUrl + "?type=CV").file(multipartFile))
+                .andExpect(status().isOk());
     }
 
+    @Test
+    public void testGetCVinPDF() throws Exception {
+        mvc.perform(get(baseUrl + "/" + document.getId() + "?type=CV"))
+                .andExpect(status().isOk())
+                .andExpect(content().bytes(document.getContent()));
+    }
 }
