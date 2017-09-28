@@ -34,8 +34,4 @@ public class CV extends Document {
 
         this.tags = tags;
     }
-
-    public void accept(DocumentVisitor visitor) {
-        visitor.visit(this);
-    }
 }

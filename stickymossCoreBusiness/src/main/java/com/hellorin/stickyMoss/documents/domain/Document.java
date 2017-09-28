@@ -61,6 +61,4 @@ public abstract class Document {
             throw new IllegalArgumentException("Content of the file cannot be empty");
         }
     }
-
-    abstract public void accept(DocumentVisitor documentVisitor);
 }
