@@ -3,6 +3,7 @@ package com.hellorin.stickyMoss.jobHunting.services;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplicationStatus;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -13,9 +14,12 @@ import javax.validation.constraints.NotNull;
  */
 @Validated
 public interface IJobApplicationService {
-    JobApplication newApplication(@Valid @NotNull JobApplication jobApplication);
+    JobApplication newApplication(@Valid @NotNull Long userId, @Valid @NotNull JobApplication jobApplication);
 
-    JobApplication getApplication(@Valid @NotNull Long id, String username);
+    JobApplication getApplication(@Valid Long userId, @Valid @NotNull Long id);
 
-    JobApplication archiveApplication(@Valid @NotNull Long id, @Valid @NotNull JobApplicationStatus status);
+    @Secured("ROLE_ADMIN")
+    JobApplication getApplication(@Valid @NotNull Long id);
+
+    JobApplication archiveApplication(@Valid @NotNull Long userId, @Valid @NotNull Long id, @Valid @NotNull JobApplicationStatus status);
 }

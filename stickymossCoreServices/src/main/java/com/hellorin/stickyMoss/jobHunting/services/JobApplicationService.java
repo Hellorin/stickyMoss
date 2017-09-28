@@ -21,36 +21,34 @@ public class JobApplicationService implements IJobApplicationService {
     private JobApplicationRepository jobApplicationRepository;
 
     @Override
-    public JobApplication newApplication(final JobApplication jobApplication) {
+    public JobApplication newApplication(final Long userId, final JobApplication jobApplication) {
         return jobApplicationRepository.save(jobApplication);
     }
 
     @Override
-    public JobApplication getApplication(final Long id, final String username) {
-        Optional<JobApplication> maybeJobApplication;
-        if (username == null) {
-            maybeJobApplication = Optional.ofNullable(jobApplicationRepository.findOne(id));
-        } else {
-            maybeJobApplication = Optional.ofNullable(jobApplicationRepository.getTheJobApplicationForGivenUser(id, username));
-        }
+    public JobApplication getApplication(final Long userId, final Long id) {
+        Optional<JobApplication> maybeJobApplication = Optional.ofNullable(jobApplicationRepository.getTheJobApplicationForGivenUser(id, userId));
 
         return maybeJobApplication
-                .filter(this::userIsAuthorized)
                 .orElseThrow(JobApplicationNotFoundException::new);
     }
 
     @Override
-    public JobApplication archiveApplication(final Long id, final JobApplicationStatus status) {
-        Optional<JobApplication> jobApplication = Optional.ofNullable(this.getApplication(id, null));
+    public JobApplication getApplication(final Long id) {
+        Optional<JobApplication> maybeJobApplication = Optional.ofNullable(jobApplicationRepository.findOne(id));
 
-        jobApplication.filter(this::userIsAuthorized).ifPresent(application -> application.setStatus(status));
-
-        return jobApplication.orElse(null);
+        return maybeJobApplication
+                .orElseThrow(JobApplicationNotFoundException::new);
     }
 
-    private boolean userIsAuthorized(final JobApplication jobApplication){
-        // TODO implement it with UserDetails
-        return true;
+    @Override
+    public JobApplication archiveApplication(final Long userId, final Long id, final JobApplicationStatus status) {
+        Optional<JobApplication> jobApplication = Optional.ofNullable(this.getApplication(userId, id));
+
+        jobApplication
+                .ifPresent(application -> application.setStatus(status));
+
+        return jobApplication.orElse(null);
     }
 
 }

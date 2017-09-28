@@ -40,8 +40,6 @@ public class CVDocumentServiceTest {
     @Autowired
     private CVDocumentService cvDocumentService;
 
-
-
     @Test
     public void testGetType() {
         assertEquals(CV.class, cvDocumentService.getType());

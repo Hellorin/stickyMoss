@@ -50,9 +50,9 @@ public class ApplicantService implements IApplicantService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         Optional<Applicant> applicant = applicantRepository.findByEmail(email);
 
-        return applicant.orElseThrow(() -> new ApplicantNotFoundException("Cannot find user with email " + email));
+        return applicant.orElseThrow(() -> new UsernameNotFoundException("Cannot find user with email " + email));
     }
 }

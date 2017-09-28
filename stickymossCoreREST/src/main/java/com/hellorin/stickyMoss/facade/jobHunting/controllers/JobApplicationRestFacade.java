@@ -56,7 +56,7 @@ public class JobApplicationRestFacade {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<JobApplicationDTO> getJobApplication (@AuthenticationPrincipal final Applicant applicant,
                                                                 @PathVariable final Long id) {
-        JobApplication jobApplication = jobApplicationService.getApplication(id, null);
+        JobApplication jobApplication = jobApplicationService.getApplication(applicant.getId(), id);
 
         return ResponseEntity.ok(stickyMossOrikaMapper.getFacade().map(jobApplication, JobApplicationDTO.class));
     }
@@ -70,7 +70,7 @@ public class JobApplicationRestFacade {
         JobApplication jobApplication = stickyMossOrikaMapper.getFacade().map(jobApplicationDTO, JobApplication.class);
 
         jobApplication.setApplicant(applicant);
-        JobApplication jobApplicationCreated = jobApplicationService.newApplication(jobApplication);
+        JobApplication jobApplicationCreated = jobApplicationService.newApplication(applicant.getId(), jobApplication);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
@@ -87,7 +87,7 @@ public class JobApplicationRestFacade {
                                                                    @RequestParam(value="type") final JobApplicationStatusDTO archivingMode) {
         JobApplicationStatus status = stickyMossOrikaMapper.getFacade().map(archivingMode, JobApplicationStatus.class);
 
-        JobApplication archivedJobApplication = jobApplicationService.archiveApplication(id, status);
+        JobApplication archivedJobApplication = jobApplicationService.archiveApplication(applicant.getId(), id, status);
 
         JobApplicationDTO dto = stickyMossOrikaMapper.getFacade().map(archivedJobApplication, JobApplicationDTO.class);
 

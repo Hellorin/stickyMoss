@@ -51,7 +51,7 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
     public void setup() throws Exception {
         jobApplicationRepository.deleteAllInBatch();
 
-        applicant = applicantRepository.save(new Applicant("firstname","lastname", "encPassword", "email"));
+        applicant = applicantRepository.findByEmail("email@email.com").get();
 
         JobApplication jobApplicationBefore = new JobApplication(new Date(), applicant);
 

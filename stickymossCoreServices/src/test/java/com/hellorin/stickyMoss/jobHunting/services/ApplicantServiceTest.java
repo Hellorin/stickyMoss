@@ -16,11 +16,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -173,7 +176,7 @@ public class ApplicantServiceTest {
 
     }
 
-    @Test(expected = ApplicantNotFoundException.class)
+    @Test(expected = UsernameNotFoundException.class)
     @WithMockUser(roles={"ADMIN"})
     public void testDeleteInexistingApplicantById() {
         // Given
@@ -183,6 +186,29 @@ public class ApplicantServiceTest {
 
         // When
         applicantService.deleteApplicant(1L);
+    }
+
+    @Test
+    public void testLoadUserByUsername() {
+        // Given
+        Applicant applicant = mock(Applicant.class);
+        when(applicantRepository.findByEmail("username")).thenReturn(Optional.of(applicant));
+
+        // When
+        UserDetails userDetails = applicantService.loadUserByUsername("username");
+
+        // Then
+        verify(applicantRepository, times(1)).findByEmail("username");
+        assertNotNull(userDetails);
+    }
+
+    @Test(expected = ApplicantNotFoundException.class)
+    public void testLoadUserByUsernameUnknown() {
+        // Given
+        when(applicantRepository.findByEmail("username")).thenReturn(Optional.empty());
+
+        // When
+        applicantService.loadUserByUsername("username");
     }
 
 }

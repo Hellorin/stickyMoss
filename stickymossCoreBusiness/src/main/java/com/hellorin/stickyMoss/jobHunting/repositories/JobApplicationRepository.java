@@ -14,6 +14,6 @@ import java.util.Optional;
 @Repository
 public interface JobApplicationRepository extends JpaRepository<JobApplication, Long> {
 
-    @Query("SELECT appl FROM JobApplication appl JOIN appl.applicant a WHERE appl.id = :id AND a.email = :email")
-    public JobApplication getTheJobApplicationForGivenUser(@Param("id") Long id, @Param("email") String email);
+    @Query("SELECT appl FROM JobApplication appl JOIN appl.applicant a WHERE appl.id = :id AND a.id = :userId")
+    public JobApplication getTheJobApplicationForGivenUser(@Param("id") Long id, @Param("userId") Long userId);
 }

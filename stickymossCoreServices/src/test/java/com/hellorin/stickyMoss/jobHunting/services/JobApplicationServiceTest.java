@@ -1,10 +1,12 @@
 package com.hellorin.stickyMoss.jobHunting.services;
 
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
+import com.hellorin.stickyMoss.jobHunting.domain.JobApplicationStatus;
 import com.hellorin.stickyMoss.jobHunting.exceptions.JobApplicationNotFoundException;
 import com.hellorin.stickyMoss.jobHunting.repositories.JobApplicationRepository;
 import org.hibernate.validator.method.MethodConstraintViolationException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.validation.beanvalidation.MethodValidationPostProcess
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 /**
@@ -64,7 +67,7 @@ public class JobApplicationServiceTest {
 
     @Test(expected = MethodConstraintViolationException.class)
     public void testNewApplicationNull() {
-        jobApplicationService.newApplication(null);
+        jobApplicationService.newApplication(1L, null);
     }
 
     @Test
@@ -77,7 +80,7 @@ public class JobApplicationServiceTest {
         when(jobApplicationRepository.save(jobApplicationBeforeSaving)).thenReturn(jobApplicationAfterSaving);
 
         // When
-        JobApplication jobApplication = jobApplicationService.newApplication(jobApplicationBeforeSaving);
+        JobApplication jobApplication = jobApplicationService.newApplication(1L, jobApplicationBeforeSaving);
 
         // Then
         assertEquals(jobApplicationAfterSaving, jobApplication);
@@ -97,7 +100,7 @@ public class JobApplicationServiceTest {
         when(jobApplicationRepository.findOne(1L)).thenReturn(jobApplicationReturned);
 
         // When
-        JobApplication jobApplication = jobApplicationService.getApplication(1L, null);
+        JobApplication jobApplication = jobApplicationService.getApplication(1L);
 
         // Then
         assertEquals(jobApplicationReturned, jobApplication);
@@ -110,23 +113,46 @@ public class JobApplicationServiceTest {
         doReturn(null).when(jobApplicationRepository).findOne(1L);
 
         // When
-        jobApplicationService.getApplication(1L, null);
+        jobApplicationService.getApplication(1L);
     }
 
     @Test
     public void testGetApplicationForGivenUserEmail() {
         // Given
         JobApplication jobApplicationReturned = mock(JobApplication.class);
-        when(jobApplicationRepository.getTheJobApplicationForGivenUser(1L, "email@email.com")).thenReturn(jobApplicationReturned);
+        when(jobApplicationRepository.getTheJobApplicationForGivenUser(1L, 1L)).thenReturn(jobApplicationReturned);
 
         // When
-        JobApplication jobApplication = jobApplicationService.getApplication(1L, "email@email.com");
+        JobApplication jobApplication = jobApplicationService.getApplication(1L, 1L);
 
         // Then
         assertEquals(jobApplicationReturned, jobApplication);
-        verify(jobApplicationRepository, times(1)).getTheJobApplicationForGivenUser(1L, "email@email.com");
+        verify(jobApplicationRepository, times(1)).getTheJobApplicationForGivenUser(1L, 1L);
     }
 
+
+    @Test
+    public void testArchiveApplication() {
+        // Given
+        JobApplication jobApplicationBefore = mock(JobApplication.class);
+        when(jobApplicationRepository.getTheJobApplicationForGivenUser(1L, 1L)).thenReturn(jobApplicationBefore);
+
+        // When
+        JobApplication jobApplicationReturned = jobApplicationService.archiveApplication(1L, 1L, JobApplicationStatus.CANCELED);
+
+        // Then
+        assertNotNull(jobApplicationReturned);
+        verify(jobApplicationBefore, times(1)).setStatus(JobApplicationStatus.CANCELED);
+    }
+
+    @Test(expected = JobApplicationNotFoundException.class)
+    public void testArchiveApplicationNotFound() {
+        // Given
+        when(jobApplicationRepository.getTheJobApplicationForGivenUser(1L, 1L)).thenReturn(null);
+
+        // When
+        JobApplication jobApplicationReturned = jobApplicationService.archiveApplication(1L, 1L, JobApplicationStatus.CANCELED);
+    }
     /*@Test
 
 

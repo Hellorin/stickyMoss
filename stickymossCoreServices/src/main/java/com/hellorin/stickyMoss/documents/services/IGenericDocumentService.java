@@ -1,7 +1,6 @@
 package com.hellorin.stickyMoss.documents.services;
 
 import com.hellorin.stickyMoss.documents.domain.Document;
-import org.springframework.data.util.Pair;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
