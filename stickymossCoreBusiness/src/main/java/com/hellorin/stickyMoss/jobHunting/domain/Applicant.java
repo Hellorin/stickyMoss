@@ -90,10 +90,6 @@ public class Applicant implements UserDetails {
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
 
-    public boolean verifyPassword(final String enteredEncPassword) {
-        return encPassword.equals(enteredEncPassword);
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.asList(new SimpleGrantedAuthority("USER"));
