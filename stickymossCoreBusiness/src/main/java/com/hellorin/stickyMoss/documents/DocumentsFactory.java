@@ -8,9 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.activation.MimetypesFileTypeMap;
 import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * Created by hellorin on 26.09.17.

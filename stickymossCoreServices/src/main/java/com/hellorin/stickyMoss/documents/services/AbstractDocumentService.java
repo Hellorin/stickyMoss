@@ -18,6 +18,4 @@ public interface AbstractDocumentService<T extends Document> {
     T modify(@Valid T document);
 
     T get(@Valid Long id);
-
-    void delete(@Valid Long id);
 }

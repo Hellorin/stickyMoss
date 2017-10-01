@@ -1,6 +1,7 @@
 package com.hellorin.stickyMoss.documents.services;
 
 import com.hellorin.stickyMoss.documents.domain.Document;
+import com.hellorin.stickyMoss.documents.exceptions.DocumentNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +15,9 @@ import java.io.IOException;
 public interface IGenericDocumentService {
     void createDocument(MultipartFile file, @Valid String type) throws IOException;
 
-    <T extends Document> T getDocument(@Valid Long id);
+    <T extends Document> T getDocument(@Valid Long id) throws DocumentNotFoundException;
 
-    void delete(@Valid Long id);
+    <T extends Document> T modifyDocument(@Valid Document document) throws DocumentNotFoundException;
+
+    void delete(@Valid Long id) throws DocumentNotFoundException;
 }

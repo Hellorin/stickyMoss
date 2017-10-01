@@ -43,11 +43,7 @@ public class DocumentServicesFactory {
                 .filter(service -> documentType.equals(service.getType().getSimpleName()))
                 .findFirst();
 
-        if (documentService.isPresent()) {
-            return documentService.get();
-        } else {
-            throw new UnsupportedFileFormatException();
-        }
+        return documentService.orElseThrow(() -> new UnsupportedFileFormatException());
     }
 
     public List<AbstractDocumentService> getAllSpecificDocumentServices() {

@@ -1,6 +1,7 @@
 package com.hellorin.stickyMoss.documents.services;
 
 import com.hellorin.stickyMoss.documents.domain.CV;
+import com.hellorin.stickyMoss.documents.exceptions.DocumentNotFoundException;
 import com.hellorin.stickyMoss.documents.repositories.CVRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,21 +29,23 @@ public class CVDocumentService implements AbstractDocumentService<CV> {
 
     @Override
     public CV modify(final CV document) {
-        throw new UnsupportedOperationException();
+        if (cvRepository.exists(document.getId())) {
+            CV cv = cvRepository.getOne(document.getId());
+
+            cv.modifyWith(document);
+
+            return cv;
+        } else {
+            throw new DocumentNotFoundException();
+        }
     }
 
     @Override
     public final CV get(final Long id) {
         if (cvRepository.exists(id)) {
             return cvRepository.getOne(id);
-        }
-        return null;
-    }
-
-    @Override
-    public final void delete(final Long id) {
-        if (cvRepository.exists(id)) {
-            cvRepository.delete(id);
+        } else {
+            throw new DocumentNotFoundException();
         }
     }
 }
