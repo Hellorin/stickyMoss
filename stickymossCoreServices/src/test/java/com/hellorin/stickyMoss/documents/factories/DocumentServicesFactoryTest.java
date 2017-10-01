@@ -1,13 +1,9 @@
 package com.hellorin.stickyMoss.documents.factories;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.hellorin.stickyMoss.documents.DocumentsFactory;
 import com.hellorin.stickyMoss.documents.exceptions.UnsupportedFileFormatException;
 import com.hellorin.stickyMoss.documents.repositories.DocumentRepository;
-import com.hellorin.stickyMoss.documents.services.AbstractDocumentService;
-import com.hellorin.stickyMoss.documents.services.CVDocumentService;
-import com.hellorin.stickyMoss.documents.services.GenericDocumentService;
-import com.hellorin.stickyMoss.documents.services.IGenericDocumentService;
+import com.hellorin.stickyMoss.documents.services.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertNotNull;
