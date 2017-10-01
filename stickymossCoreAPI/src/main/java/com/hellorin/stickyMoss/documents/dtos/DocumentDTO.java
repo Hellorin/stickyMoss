@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.hellorin.stickyMoss.StickyMossDTO;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.core.io.Resource;
 
 import java.io.*;
@@ -15,7 +18,9 @@ import java.util.UUID;
 /**
  * Created by hellorin on 04.08.17.
  */
-@Data
+@NoArgsConstructor
+@Setter
+@Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
         property = "type")
