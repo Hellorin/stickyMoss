@@ -42,6 +42,72 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- Execute an ant task within maven -->
+                                <echo message="Generating JaCoCo Reports" />
+                                <taskdef name="report" classname="org.jacoco.ant.ReportTask">
+                                    <classpath path="${basedir}/target/jacoco-jars/org.jacoco.ant.jar" />
+                                </taskdef>
+                                <mkdir dir="${basedir}/target/coverage-report" />
+                                <report>
+                                    <executiondata>
+                                        <fileset dir="${build.directory.projecta}">
+                                            <include name="jacoco.exec" />
+                                        </fileset>
+                                        <fileset dir="${build.directory.projectb}">
+                                            <include name="jacoco.exec" />
+                                        </fileset>
+                                        <fileset dir="${build.directory.projectc}">
+                                            <include name="jacoco.exec" />
+                                        </fileset>
+                                        <fileset dir="${build.directory.projectd}">
+                                            <include name="jacoco.exec" />
+                                        </fileset>
+                                    </executiondata>
+                                    <structure name="jacoco-multi Coverage Project">
+                                        <group name="jacoco-multi">
+                                            <classfiles>
+                                                <fileset dir="${classes.directory.projecta}" />
+                                                <fileset dir="${classes.directory.projectb}" />
+                                                <fileset dir="${classes.directory.projectc}" />
+                                                <fileset dir="${classes.directory.projectd}" />
+                                            </classfiles>
+                                            <sourcefiles encoding="UTF-8">
+                                                <fileset dir="${sources.directory.projecta}" />
+                                                <fileset dir="${sources.directory.projectb}" />
+                                                <fileset dir="${sources.directory.projectc}" />
+                                                <fileset dir="${sources.directory.projectd}" />
+                                            </sourcefiles>
+                                        </group>
+                                    </structure>
+                                    <html destdir="${basedir}/target/coverage-report/html" />
+                                    <xml destfile="${basedir}/target/coverage-report/coverage-report.xml" />
+                                    <csv destfile="${basedir}/target/coverage-report/coverage-report.csv" />
+                                </report>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>org.jacoco.ant</artifactId>
+                        <version>0.7.9</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>

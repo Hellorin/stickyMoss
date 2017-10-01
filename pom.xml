@@ -30,6 +30,26 @@
         <lombok.version>1.16.16</lombok.version>
         <orika.version>1.5.1</orika.version>
 		<log4j.version>1.2.17</log4j.version>
+
+        <build.directory.projecta>../stickymossCoreBusiness/target</build.directory.projecta>
+        <build.directory.projectb>../stickymossCoreServices/target</build.directory.projectb>
+        <build.directory.projectc>../stickymossCoreAPI/target</build.directory.projectc>
+        <build.directory.projectd>../stickymossCoreREST/target</build.directory.projectd>
+
+        <classes.directory.projecta>../stickymossCoreBusiness/target/classes</classes.directory.projecta>
+        <classes.directory.projectb>../stickymossCoreServices/target/classes</classes.directory.projectb>
+        <classes.directory.projectc>../stickymossCoreAPI/target/classes</classes.directory.projectc>
+        <classes.directory.projectd>../stickymossCoreREST/target/classes</classes.directory.projectd>
+
+        <sources.directory.projecta>../stickymossCoreBusiness/src/main/java</sources.directory.projecta>
+        <sources.directory.projectb>../stickymossCoreServices/src/main/java</sources.directory.projectb>
+        <sources.directory.projectc>../stickymossCoreAPI/src/main/java</sources.directory.projectc>
+        <sources.directory.projectd>../stickymossCoreREST/src/main/java</sources.directory.projectd>
+
+        <generated-sources.directory.projecta>../stickymossCoreBusiness/target/generated-sources/annotations</generated-sources.directory.projecta>
+        <generated-sources.directory.projectb>../stickymossCoreServices/target/generated-sources/annotations</generated-sources.directory.projectb>
+        <generated-sources.directory.projectc>../stickymossCoreAPI/target/generated-sources/annotations</generated-sources.directory.projectc>
+        <generated-sources.directory.projectd>../stickymossCoreREST/target/generated-sources/annotations</generated-sources.directory.projectd>
     </properties>
 
     <dependencyManagement>
@@ -122,4 +142,31 @@
 			<artifactId>log4j</artifactId>
 		</dependency>
     </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.9</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
