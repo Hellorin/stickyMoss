@@ -69,5 +69,7 @@ public class JobApplicationTest {
         assertTrue(jobApplication2.equals(jobApplication1));
 
         assertFalse(jobApplication1.equals(jobApplication4));
+
+        assertEquals(jobApplication1.hashCode(), jobApplication2.hashCode());
     }
 }

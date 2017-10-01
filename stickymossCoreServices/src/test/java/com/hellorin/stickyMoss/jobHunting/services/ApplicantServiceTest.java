@@ -176,7 +176,7 @@ public class ApplicantServiceTest {
 
     }
 
-    @Test(expected = UsernameNotFoundException.class)
+    @Test(expected = ApplicantNotFoundException.class)
     @WithMockUser(roles={"ADMIN"})
     public void testDeleteInexistingApplicantById() {
         // Given
@@ -202,7 +202,7 @@ public class ApplicantServiceTest {
         assertNotNull(userDetails);
     }
 
-    @Test(expected = ApplicantNotFoundException.class)
+    @Test(expected = UsernameNotFoundException.class)
     public void testLoadUserByUsernameUnknown() {
         // Given
         when(applicantRepository.findByEmail("username")).thenReturn(Optional.empty());
