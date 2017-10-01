@@ -61,4 +61,10 @@ public abstract class Document {
             throw new IllegalArgumentException("Content of the file cannot be empty");
         }
     }
+
+    public void modifyWith(Document doc) {
+        setName(doc.getName());
+        setContent(doc.getContent());
+        setFormat(doc.getFormat());
+    }
 }

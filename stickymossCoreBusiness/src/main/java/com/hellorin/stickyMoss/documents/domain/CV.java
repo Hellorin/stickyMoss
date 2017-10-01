@@ -34,4 +34,10 @@ public class CV extends Document {
 
         this.tags = tags;
     }
+
+    public void modifyWith(CV doc) {
+        super.modifyWith(doc);
+    }
+
 }
+
