@@ -77,8 +77,10 @@ CREATE TABLE JOB_APPLICATIONS(
     date_submitted DATE NOT NULL,
     status VARCHAR(50),
     applicant_id BIGINT,
+    cv_id BIGINT,
     PRIMARY KEY(id),
-    FOREIGN KEY(applicant_id) REFERENCES APPLICANTS(id)
+    FOREIGN KEY(applicant_id) REFERENCES APPLICANTS(id),
+    FOREIGN KEY(cv_id) REFERENCES CVS(id)
 );
 
 COMMIT;

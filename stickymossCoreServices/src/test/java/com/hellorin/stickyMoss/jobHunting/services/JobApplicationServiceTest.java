@@ -1,19 +1,21 @@
 package com.hellorin.stickyMoss.jobHunting.services;
 
+import com.hellorin.stickyMoss.documents.domain.CV;
+import com.hellorin.stickyMoss.documents.exceptions.DocumentNotFoundException;
+import com.hellorin.stickyMoss.documents.repositories.DocumentRepository;
+import com.hellorin.stickyMoss.documents.services.IGenericDocumentService;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplicationStatus;
 import com.hellorin.stickyMoss.jobHunting.exceptions.JobApplicationNotFoundException;
 import com.hellorin.stickyMoss.jobHunting.repositories.JobApplicationRepository;
 import org.hibernate.validator.method.MethodConstraintViolationException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -58,7 +60,13 @@ public class JobApplicationServiceTest {
     private IJobApplicationService jobApplicationService;
 
     @MockBean
+    private IGenericDocumentService genericDocumentService;
+
+    @MockBean
     private JobApplicationRepository jobApplicationRepository;
+
+    @MockBean
+    private DocumentRepository documentRepository;
 
     @Before
     public void setup() {
@@ -151,34 +159,68 @@ public class JobApplicationServiceTest {
         when(jobApplicationRepository.getTheJobApplicationForGivenUser(1L, 1L)).thenReturn(null);
 
         // When
-        JobApplication jobApplicationReturned = jobApplicationService.archiveApplication(1L, 1L, JobApplicationStatus.CANCELED);
-    }
-    /*@Test
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testDeleteApplicationNull() {
-        jobApplicationService.deleteApplication(null);
+        jobApplicationService.archiveApplication(1L, 1L, JobApplicationStatus.CANCELED);
     }
 
     @Test
-    public void testDeleteApplicationNormal() {
+    public void testSetCV() {
         // Given
+        JobApplication jobApplicationBefore = mock(JobApplication.class);
+        when(jobApplicationRepository.getTheJobApplicationForGivenUser(1L, 1L)).thenReturn(jobApplicationBefore);
 
+        CV cv = mock(CV.class);
+        when(genericDocumentService.getDocument(1L)).thenReturn(cv);
 
         // When
-        jobApplicationService.deleteApplication(1L);
+        JobApplication jobApplicationReturned = jobApplicationService.setCVtoJobApplication(1L, 1L, 1L);
 
         // Then
-        verify(jobApplicationRepository, times(1)).delete(1L);
+        assertNotNull(jobApplicationReturned);
+        verify(jobApplicationBefore, times(1)).setCv(cv);
+        assertEquals(jobApplicationBefore, jobApplicationReturned);
     }
 
-    @Test(expected = Exception.class)
-    public void testDeleteApplicationUnknown() {
+    @Test(expected = DocumentNotFoundException.class)
+    public void testSetCVnoCV() {
         // Given
-        doThrow(Exception.class).when(jobApplicationRepository).delete(2L);
+        JobApplication jobApplicationBefore = mock(JobApplication.class);
+        when(jobApplicationRepository.getTheJobApplicationForGivenUser(1L, 1L)).thenReturn(jobApplicationBefore);
+
+        CV cv = mock(CV.class);
+        when(genericDocumentService.getDocument(1L)).thenThrow(DocumentNotFoundException.class);
 
         // When
-        jobApplicationService.deleteApplication(2L);
-    }*/
+        jobApplicationService.setCVtoJobApplication(1L, 1L, 1L);
+    }
+
+    @Test(expected = JobApplicationNotFoundException.class)
+    public void testSetCVNoApplication() {
+        // Given
+        JobApplication jobApplicationBefore = mock(JobApplication.class);
+        when(jobApplicationRepository.getTheJobApplicationForGivenUser(1L, 1L)).thenReturn(null);
+
+        CV cv = mock(CV.class);
+        when(genericDocumentService.getDocument(1L)).thenReturn(cv);
+
+        // When
+        jobApplicationService.setCVtoJobApplication(1L, 1L, 1L);
+    }
+
+    @Test(expected = MethodConstraintViolationException.class)
+    public void testSetCVBadInput1() {
+        // When
+        jobApplicationService.setCVtoJobApplication(null, 1L, 1L);
+    }
+
+    @Test(expected = MethodConstraintViolationException.class)
+    public void testSetCVBadInput2() {
+        // When
+        jobApplicationService.setCVtoJobApplication(1L, null, 1L);
+    }
+
+    @Test(expected = MethodConstraintViolationException.class)
+    public void testSetCVBadInput3() {
+        // When
+        jobApplicationService.setCVtoJobApplication(1L, 1L, null);
+    }
 }

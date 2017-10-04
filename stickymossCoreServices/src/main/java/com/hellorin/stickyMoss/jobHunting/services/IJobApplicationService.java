@@ -16,6 +16,8 @@ import javax.validation.constraints.NotNull;
 public interface IJobApplicationService {
     JobApplication newApplication(@Valid @NotNull Long userId, @Valid @NotNull JobApplication jobApplication);
 
+    JobApplication setCVtoJobApplication(@Valid @NotNull Long userId, @Valid @NotNull Long cvId, @Valid @NotNull Long id);
+
     JobApplication getApplication(@Valid Long userId, @Valid @NotNull Long id);
 
     @Secured("ROLE_ADMIN")

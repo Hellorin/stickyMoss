@@ -1,9 +1,11 @@
 package com.hellorin.stickyMoss.jobHunting.domain;
 
+import com.hellorin.stickyMoss.documents.domain.CV;
 import lombok.*;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -45,9 +47,10 @@ public class JobApplication {
     @OneToOne
     private Applicant applicant;
 
-    /*@OneToOne
-    @NotNull
-    private CV cv;*/
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter
+    @Getter
+    private CV cv;
 
     private JobApplication(final Applicant applicant) {
         this.applicant = applicant;
