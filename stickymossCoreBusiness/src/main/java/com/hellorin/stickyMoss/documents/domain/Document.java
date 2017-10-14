@@ -2,11 +2,10 @@ package com.hellorin.stickyMoss.documents.domain;
 
 import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.core.io.Resource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Created by hellorin on 23.06.17.
@@ -43,11 +42,10 @@ public abstract class Document {
     @NotNull
     private byte[] content;
 
-    @Temporal(TemporalType.DATE)
     @Getter
     @Setter
     @NotNull
-    private Date dateUploaded;
+    private LocalDate dateUploaded;
 
     public Document(@NonNull @NotEmpty final String name,
                     @NonNull final DocumentFileFormat format,
@@ -56,7 +54,7 @@ public abstract class Document {
             this.name = name;
             this.format = format;
             this.content = content;
-            this.dateUploaded = new Date();
+            this.dateUploaded = LocalDate.now();
         } else {
             throw new IllegalArgumentException("Content of the file cannot be empty");
         }

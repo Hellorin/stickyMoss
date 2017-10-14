@@ -2,16 +2,12 @@ package com.hellorin.stickyMoss.jobHunting.domain;
 
 import com.hellorin.stickyMoss.documents.domain.CV;
 import lombok.*;
-import org.hibernate.annotations.*;
 
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-
-import static javax.persistence.GenerationType.IDENTITY;
+import java.time.LocalDate;
 
 /**
  * Created by hellorin on 21.06.17.
@@ -34,8 +30,7 @@ public class JobApplication {
 
     @Getter
     @Setter
-    @Temporal(TemporalType.DATE)
-    private Date dateSubmitted;
+    private LocalDate dateSubmitted;
 
     @Getter
     @Setter
@@ -56,12 +51,12 @@ public class JobApplication {
         this.applicant = applicant;
     }
 
-    public JobApplication(final Date date, final Applicant applicant) {
+    public JobApplication(final LocalDate date, final Applicant applicant) {
         this(applicant);
         this.dateSubmitted = date;
     }
 
-    public JobApplication(final Date date, final Applicant applicant, final JobApplicationStatus jobApplicationStatus) {
+    public JobApplication(final LocalDate date, final Applicant applicant, final JobApplicationStatus jobApplicationStatus) {
         this(date, applicant);
         this.status = jobApplicationStatus;
     }

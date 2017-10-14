@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -82,9 +83,9 @@ public class JobApplicationServiceTest {
     public void testNewApplication() {
         // Given
         JobApplication jobApplicationBeforeSaving = mock(JobApplication.class);
-        when(jobApplicationBeforeSaving.getDateSubmitted()).thenReturn(new Date());
+        when(jobApplicationBeforeSaving.getDateSubmitted()).thenReturn(LocalDate.now());
         JobApplication jobApplicationAfterSaving = mock(JobApplication.class);
-        when(jobApplicationAfterSaving.getDateSubmitted()).thenReturn(new Date());
+        when(jobApplicationAfterSaving.getDateSubmitted()).thenReturn(LocalDate.now());
         when(jobApplicationRepository.save(jobApplicationBeforeSaving)).thenReturn(jobApplicationAfterSaving);
 
         // When

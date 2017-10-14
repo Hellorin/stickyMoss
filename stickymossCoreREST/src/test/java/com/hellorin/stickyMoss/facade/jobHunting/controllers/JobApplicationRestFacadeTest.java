@@ -1,6 +1,9 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
 import com.hellorin.stickyMoss.TestStickyMossConfiguration;
+import com.hellorin.stickyMoss.documents.domain.CV;
+import com.hellorin.stickyMoss.documents.domain.DocumentFileFormat;
+import com.hellorin.stickyMoss.documents.repositories.CVRepository;
 import com.hellorin.stickyMoss.facade.AbstractRestControllerTest;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
@@ -20,6 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static org.hamcrest.Matchers.*;
@@ -43,6 +47,9 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
     private JobApplicationRepository jobApplicationRepository;
 
     @Autowired
+    private CVRepository cvRepository;
+
+    @Autowired
     private ApplicantRepository applicantRepository;
 
     private String baseUrl;
@@ -53,7 +60,7 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
 
         applicant = applicantRepository.findByEmail("email@email.com").get();
 
-        JobApplication jobApplicationBefore = new JobApplication(new Date(), applicant);
+        JobApplication jobApplicationBefore = new JobApplication(LocalDate.now(), applicant);
 
         jobApplication = jobApplicationRepository.save(jobApplicationBefore);
 
@@ -90,7 +97,7 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
     @WithUserDetails("email@email.com")
     public void testNewJobApplication() throws Exception {
         JobApplicationDTO jobApplicationDTO = new JobApplicationDTO();
-        jobApplicationDTO.setDateSubmitted(new Date());
+        jobApplicationDTO.setDateSubmitted(LocalDate.now());
 
         mvc.perform(
                 MockMvcRequestBuilders.put(baseUrl)
@@ -102,7 +109,7 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
     @Test
     public void testNewJobApplicationWithUnauthorizedUser() throws Exception {
         JobApplicationDTO jobApplicationDTO = new JobApplicationDTO();
-        jobApplicationDTO.setDateSubmitted(new Date());
+        jobApplicationDTO.setDateSubmitted(LocalDate.now());
 
         mvc.perform(
                 MockMvcRequestBuilders.put(baseUrl + "/" + (applicant.getId()))
@@ -113,7 +120,7 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
 
     @Test
     public void testArchiveJobApplicationWithUnauthorizedUser() throws Exception {
-        JobApplication jobApplication = jobApplicationRepository.save(new JobApplication(new Date(), applicant));
+        JobApplication jobApplication = jobApplicationRepository.save(new JobApplication(LocalDate.now(), applicant));
 
         mvc.perform(
                 MockMvcRequestBuilders.delete(baseUrl + "/" + jobApplication.getId() + "?type=CANCELED"))
@@ -123,7 +130,7 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
     @Test
     @WithUserDetails("email@email.com")
     public void testArchiveJobApplicationCancel() throws Exception {
-        JobApplication jobApplication = jobApplicationRepository.save(new JobApplication(new Date(), applicant));
+        JobApplication jobApplication = jobApplicationRepository.save(new JobApplication(LocalDate.now(), applicant));
 
         mvc.perform(
                 MockMvcRequestBuilders.delete(baseUrl + "/" + jobApplication.getId() + "?type=CANCELED"))
@@ -141,7 +148,7 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
     @Test
     @WithUserDetails("email@email.com")
     public void testArchiveJobApplicationClosed() throws Exception {
-        JobApplication jobApplication = jobApplicationRepository.save(new JobApplication(new Date(), applicant));
+        JobApplication jobApplication = jobApplicationRepository.save(new JobApplication(LocalDate.now(), applicant));
 
         mvc.perform(
                 MockMvcRequestBuilders.delete(baseUrl + "/" + jobApplication.getId() + "?type=CLOSED"))
@@ -154,6 +161,18 @@ public class JobApplicationRestFacadeTest extends AbstractRestControllerTest {
                 .andExpect(jsonPath("$.id", is(jobApplication.getId().intValue())))
                 .andExpect(jsonPath("$.dateSubmitted", is(jsonDateFormating(jobApplication.getDateSubmitted()))))
                 .andExpect(jsonPath("$.status", is(JobApplicationStatusDTO.CLOSED.name())));
+    }
+
+    @Test
+    @WithUserDetails("email@email.com")
+    public void testSetCVToJobApplication() throws Exception {
+        JobApplication jobApplication = jobApplicationRepository.save(new JobApplication(LocalDate.now(), applicant));
+
+        CV cv = cvRepository.save(new CV("cv.pdf", DocumentFileFormat.PDF, new byte[1]));
+
+        mvc.perform(
+                MockMvcRequestBuilders.post(baseUrl + "/" + jobApplication.getId() + "/documents/" + cv.getId())
+        ).andExpect(status().isOk());
     }
 
 }

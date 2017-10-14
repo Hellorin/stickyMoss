@@ -1,9 +1,7 @@
 package com.hellorin.stickyMoss.documents.dtos;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import com.hellorin.stickyMoss.StickyMossDTO;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +10,7 @@ import org.springframework.core.io.Resource;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -27,7 +25,9 @@ import java.util.UUID;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = CVDTO.class, name = "cv"),
 })
-public abstract class DocumentDTO extends StickyMossDTO implements Resource {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonIgnoreProperties({"open", "readable"})
+public abstract class DocumentDTO implements StickyMossDTO, Resource {
     private Long id;
 
     private String name;
@@ -36,7 +36,8 @@ public abstract class DocumentDTO extends StickyMossDTO implements Resource {
 
     private byte[] content;
 
-    private Date dateUploaded;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate dateUploaded;
 
     @Override
     public boolean exists() {

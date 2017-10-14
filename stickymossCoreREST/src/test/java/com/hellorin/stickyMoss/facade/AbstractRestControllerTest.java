@@ -11,6 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -44,10 +47,8 @@ public abstract class AbstractRestControllerTest {
                 this.mappingJackson2HttpMessageConverter);
     }
 
-    protected String jsonDateFormating(final Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
-
-        return formatter.format(date);
+    protected String jsonDateFormating(final LocalDate date) {
+        return DateTimeFormatter.ISO_DATE.format(date);
     }
 
     private static String[] getAnnotationDefaultMethodValue(final Class<?> clazz, final String attribute) throws NoSuchMethodException {

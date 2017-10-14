@@ -1,6 +1,5 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
-import com.hellorin.stickyMoss.StickyMossDTO;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
 import com.hellorin.stickyMoss.facade.mappers.StickyMossOrikaMapper;
@@ -90,6 +89,18 @@ public class JobApplicationRestFacade {
         JobApplication archivedJobApplication = jobApplicationService.archiveApplication(applicant.getId(), id, status);
 
         JobApplicationDTO dto = stickyMossOrikaMapper.getFacade().map(archivedJobApplication, JobApplicationDTO.class);
+
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping(path = "{applicationid}/documents/{cvId}",
+        produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<JobApplicationDTO> attachCVtoJobApplication(@AuthenticationPrincipal final Applicant applicant,
+                                                                      @PathVariable final Long applicationid,
+                                                                      @PathVariable final Long cvId) {
+        JobApplication jobApplication = jobApplicationService.setCVtoJobApplication(applicant.getId(), cvId, applicationid);
+
+        JobApplicationDTO dto = stickyMossOrikaMapper.getFacade().map(jobApplication, JobApplicationDTO.class);
 
         return ResponseEntity.ok(dto);
     }

@@ -1,7 +1,7 @@
 package com.hellorin.stickyMoss;
 
 /**
- * Created by hellorin on 28.09.17.
+ * Created by hellorin on 14.10.17.
  */
-public class StickyMossDTO {
+public interface StickyMossDTO {
 }

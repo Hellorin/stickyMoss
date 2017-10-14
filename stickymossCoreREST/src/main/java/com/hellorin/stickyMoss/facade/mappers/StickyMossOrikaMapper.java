@@ -43,7 +43,7 @@ public class StickyMossOrikaMapper {
                 .register();
 
         mapperFactory.classMap(ApplicantDTO.class, Applicant.class)
-                .field("plainPassword", "encPassword")
+                .field("pwd", "encPassword")
                 .byDefault()
                 .register();
 

@@ -1,7 +1,5 @@
 package com.hellorin.stickyMoss.jobHunting.dtos;
 
-import com.hellorin.stickyMoss.StickyMossDTO;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class ApplicantDTO extends StickyMossDTO {
+public class ApplicantDTO {
 
     private Long id;
 
@@ -22,5 +20,5 @@ public class ApplicantDTO extends StickyMossDTO {
 
     private String email;
 
-    private String plainPassword;
+    private String pwd;
 }

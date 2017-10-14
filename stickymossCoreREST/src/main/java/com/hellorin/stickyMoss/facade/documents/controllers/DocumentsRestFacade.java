@@ -1,6 +1,5 @@
 package com.hellorin.stickyMoss.facade.documents.controllers;
 
-import com.hellorin.stickyMoss.StickyMossDTO;
 import com.hellorin.stickyMoss.documents.domain.Document;
 import com.hellorin.stickyMoss.documents.dtos.DocumentDTO;
 import com.hellorin.stickyMoss.documents.services.IGenericDocumentService;

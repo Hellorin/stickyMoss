@@ -72,7 +72,7 @@ public class ApplicantRestFacadeTest extends AbstractRestControllerTest {
         applicantDTO.setFirstname("Jim");
         applicantDTO.setLastname("Lain");
         applicantDTO.setEmail("email@email.com");
-        applicantDTO.setPlainPassword("password");
+        applicantDTO.setPwd("password");
 
         mvc.perform(
                 MockMvcRequestBuilders.put(baseUrl)

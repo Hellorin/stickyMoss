@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -18,7 +19,7 @@ public class JobApplicationTest {
     @Test
     public void testConstructorWithStatus() {
         Applicant applicant = mock(Applicant.class);
-        Date dateSubmitted = new Date();
+        LocalDate dateSubmitted = LocalDate.now();
         JobApplication jobApplication = new JobApplication(dateSubmitted, applicant, JobApplicationStatus.SUBMITTED);
 
         assertNotNull(jobApplication);
@@ -26,31 +27,29 @@ public class JobApplicationTest {
         assertEquals(dateSubmitted, jobApplication.getDateSubmitted());
         assertEquals(JobApplicationStatus.SUBMITTED, jobApplication.getStatus());
 
-        Date newDate = new Date();
+        LocalDate newDate = LocalDate.now();
         jobApplication.setDateSubmitted(newDate);
         jobApplication.setStatus(JobApplicationStatus.CANCELED);
         assertEquals(newDate, jobApplication.getDateSubmitted());
-        //assertEquals(applicant, jobApplication.getApplicant());
         assertEquals(JobApplicationStatus.CANCELED, jobApplication.getStatus());
     }
 
     @Test
     public void testConstructorWithoutStatus() {
         Applicant applicant = mock(Applicant.class);
-        Date dateSubmitted = new Date();
+        LocalDate dateSubmitted = LocalDate.now();
         JobApplication jobApplication = new JobApplication(dateSubmitted, applicant);
 
         assertNotNull(jobApplication);
         assertNull(jobApplication.getId());
         assertEquals(dateSubmitted, jobApplication.getDateSubmitted());
-        //assertNotNull(jobApplication.getApplicant());
         assertEquals(JobApplicationStatus.DRAFT, jobApplication.getStatus());
     }
 
     @Test
     public void testEquals() {
         Applicant applicant = mock(Applicant.class);
-        Date dateSubmitted = new Date();
+        LocalDate dateSubmitted = LocalDate.now();
         JobApplication jobApplication1 = new JobApplication(dateSubmitted, applicant, JobApplicationStatus.SUBMITTED);
         JobApplication jobApplication2 = new JobApplication(dateSubmitted, applicant, JobApplicationStatus.SUBMITTED);
         JobApplication jobApplication3 = new JobApplication(dateSubmitted, applicant, JobApplicationStatus.SUBMITTED);
