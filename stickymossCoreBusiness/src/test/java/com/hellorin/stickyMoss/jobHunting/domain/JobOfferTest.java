@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -18,44 +19,39 @@ public class JobOfferTest {
 
     @Test
     public void testConstructor1() {
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        cal.add(Calendar.DAY_OF_WEEK_IN_MONTH, 12);
+        LocalDate now = LocalDate.now();
 
-        JobOffer offer1 = new JobOffer(cal.getTime(), JobOfferStatus.OPEN);
+        JobOffer offer1 = new JobOffer(now, JobOfferStatus.OPEN);
 
         assertNotNull(offer1);
         assertNull(offer1.getId());
         assertEquals(JobOfferStatus.OPEN, offer1.getStatus());
-        assertEquals(cal.getTime(), offer1.getDateDiscovered());
+        assertEquals(now, offer1.getDateDiscovered());
 
-        JobOffer offer2 = new JobOffer(cal.getTime(), JobOfferStatus.CLOSE);
+        JobOffer offer2 = new JobOffer(now, JobOfferStatus.CLOSE);
 
         assertNotNull(offer2);
         assertNull(offer2.getId());
         assertEquals(JobOfferStatus.CLOSE, offer2.getStatus());
-        assertEquals(cal.getTime(), offer1.getDateDiscovered());
+        assertEquals(now, offer1.getDateDiscovered());
 
-        JobOffer offer3 = new JobOffer(cal.getTime());
+        JobOffer offer3 = new JobOffer(now);
 
         assertNotNull(offer3);
         assertNull(offer3.getId());
         assertEquals(JobOfferStatus.OPEN, offer3.getStatus());
-        assertEquals(cal.getTime(), offer1.getDateDiscovered());
+        assertEquals(now, offer1.getDateDiscovered());
     }
 
     @Test
     public void testEquals() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
+        LocalDate date = LocalDate.now();
 
         JobOffer offer0 = new JobOffer();
-        JobOffer offer1 = new JobOffer(cal.getTime());
-        JobOffer offer2 = new JobOffer(cal.getTime());
-        JobOffer offer3 = new JobOffer(cal.getTime());
-        cal.add(Calendar.MINUTE, 12);
-        JobOffer offer4 = new JobOffer(cal.getTime());
+        JobOffer offer1 = new JobOffer(date);
+        JobOffer offer2 = new JobOffer(date);
+        JobOffer offer3 = new JobOffer(date);
+        JobOffer offer4 = new JobOffer(date.plusDays(1));
 
         assertFalse(offer1.equals(null));
         assertFalse(offer1.equals(true));
@@ -77,7 +73,7 @@ public class JobOfferTest {
 
     @Test
     public void testCloseJobOffer() {
-        Date date = new Date();
+        LocalDate date = LocalDate.now();
         JobOffer jobOffer = new JobOffer(date, JobOfferStatus.OPEN);
 
         jobOffer.close();

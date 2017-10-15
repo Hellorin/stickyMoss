@@ -5,13 +5,9 @@ import com.hellorin.stickyMoss.documents.domain.DocumentFileFormat;
 import com.hellorin.stickyMoss.documents.dtos.CVDTO;
 
 import com.hellorin.stickyMoss.documents.dtos.DocumentFileFormatDTO;
-import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
-import com.hellorin.stickyMoss.jobHunting.domain.JobApplication;
+import com.hellorin.stickyMoss.jobHunting.domain.*;
 import com.hellorin.stickyMoss.documents.domain.CV;
-import com.hellorin.stickyMoss.jobHunting.domain.JobApplicationStatus;
-import com.hellorin.stickyMoss.jobHunting.dtos.ApplicantDTO;
-import com.hellorin.stickyMoss.jobHunting.dtos.JobApplicationDTO;
-import com.hellorin.stickyMoss.jobHunting.dtos.JobApplicationStatusDTO;
+import com.hellorin.stickyMoss.jobHunting.dtos.*;
 import ma.glasnost.orika.*;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.springframework.stereotype.Component;
@@ -31,6 +27,14 @@ public class StickyMossOrikaMapper {
                 .register();
 
         mapperFactory.classMap(JobApplicationStatus.class, JobApplicationStatusDTO.class)
+                .byDefault()
+                .register();
+
+        mapperFactory.classMap(JobOffer.class, JobOfferDTO.class)
+                .byDefault()
+                .register();
+
+        mapperFactory.classMap(JobOfferStatus.class, JobOfferStatusDTO.class)
                 .byDefault()
                 .register();
 

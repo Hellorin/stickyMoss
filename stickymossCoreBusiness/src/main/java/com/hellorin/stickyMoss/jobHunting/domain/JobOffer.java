@@ -3,6 +3,7 @@ package com.hellorin.stickyMoss.jobHunting.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -26,18 +27,17 @@ public class JobOffer {
     private Long id;
 
     @Getter
-    @Temporal(TemporalType.DATE)
-    private Date dateDiscovered;
+    private LocalDate dateDiscovered;
 
     @Getter
     private JobOfferStatus status;
 
-    public JobOffer(final Date dateDiscovered, final JobOfferStatus jobOfferStatus) {
+    public JobOffer(final LocalDate dateDiscovered, final JobOfferStatus jobOfferStatus) {
         this.dateDiscovered = dateDiscovered;
         this.status = jobOfferStatus;
     }
 
-    public JobOffer(final Date dateDiscovered) {
+    public JobOffer(final LocalDate dateDiscovered) {
         this(dateDiscovered, JobOfferStatus.OPEN);
     }
 

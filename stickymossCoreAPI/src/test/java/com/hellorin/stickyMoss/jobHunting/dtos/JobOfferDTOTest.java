@@ -1,7 +1,6 @@
 package com.hellorin.stickyMoss.jobHunting.dtos;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.hellorin.stickyMoss.documents.dtos.CVDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDate;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by hellorin on 14.10.17.
@@ -25,8 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @JsonTest
 @ContextConfiguration
-public class JobApplicationDTOTest {
-
+public class JobOfferDTOTest {
     @Configuration
     static class testConfiguration {
         @Bean
@@ -38,40 +35,32 @@ public class JobApplicationDTOTest {
     }
 
     @Autowired
-    private JacksonTester<JobApplicationDTO> json;
+    private JacksonTester<JobOfferDTO> json;
 
     @Test
     public void testSerialize() throws Exception {
-        CVDTO cvdto = new CVDTO();
-        cvdto.setId(1L);
-
-        LocalDate now = LocalDate.of(2017, 10, 14);
-        JobApplicationDTO dto = new JobApplicationDTO();
-
+        LocalDate date = LocalDate.now();
+        JobOfferDTO dto = new JobOfferDTO();
         dto.setId(1L);
-        dto.setDateSubmitted(now);
-        dto.setStatus(JobApplicationStatusDTO.CANCELED);
-        dto.setCv(cvdto);
+        dto.setDateDiscovered(date);
+        dto.setStatus(JobOfferStatusDTO.CLOSE);
 
         assertThat(json.write(dto)).hasJsonPathNumberValue("id");
         assertThat(json.write(dto)).extractingJsonPathNumberValue("id").isEqualTo(1);
+        assertThat(json.write(dto)).hasJsonPathStringValue("dateDiscovered");
+        assertThat(json.write(dto)).extractingJsonPathStringValue("dateDiscovered").isEqualTo("2017-10-15");
         assertThat(json.write(dto)).hasJsonPathStringValue("status");
-        assertThat(json.write(dto)).extractingJsonPathStringValue("status").isEqualTo("CANCELED");
-        assertThat(json.write(dto)).hasJsonPathStringValue("dateSubmitted");
-        assertThat(json.write(dto)).extractingJsonPathStringValue("dateSubmitted").isEqualTo("2017-10-14");
-        assertThat(json.write(dto)).hasJsonPathValue("cv");
-        assertThat(json.write(dto)).doesNotHaveEmptyJsonPathValue("cv");
+        assertThat(json.write(dto)).extractingJsonPathStringValue("status").isEqualTo("CLOSE");
     }
 
     @Test
     public void testDeserialize() throws Exception {
-        String content = "{\"id\":1,\"dateSubmitted\":\"2017-10-14\",\"cv\":{\"type\":\"cv\",\"id\":1,\"name\":null,\"format\":null,\"content\":null,\"dateUploaded\":null},\"status\":\"CANCELED\"}";
+        String content = "{\"id\":1,\"dateDiscovered\":\"2017-10-15\",\"status\":\"CLOSE\"}";
+        LocalDate date = LocalDate.of(2017, 10, 15);
+        JobOfferDTO dto = json.parse(content).getObject();
 
-        JobApplicationDTO dto = json.parse(content).getObject();
         assertEquals(new Long(1), dto.getId());
-        assertEquals(LocalDate.of(2017, 10, 14), dto.getDateSubmitted());
-        assertEquals(JobApplicationStatusDTO.CANCELED, dto.getStatus());
-        assertNotNull(dto.getCv());
+        assertEquals(JobOfferStatusDTO.CLOSE, dto.getStatus());
+        assertEquals(date, dto.getDateDiscovered());
     }
-
 }
