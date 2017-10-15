@@ -1,6 +1,7 @@
 package com.hellorin.stickyMoss.jobHunting.domain;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -53,6 +54,7 @@ public class Applicant implements UserDetails {
     @NonNull
     @NotNull
     @NotEmpty
+    @Email
     private String email;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
