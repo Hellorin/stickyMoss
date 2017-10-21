@@ -6,8 +6,15 @@ In fact, job hunting is nowadays a long and cumbersome process. This api helps t
 
 ## Technologies
 For this project, the following technologies has been used:
-- Java
-- [Spring](https://projects.spring.io/spring-framework/)
-- [JPA](http://www.oracle.com/technetwork/java/javaee/tech/persistence-jsp-140049.html)
+- Java 8
+- [Spring Boot](https://projects.spring.io/spring-boot/)
+- [Spring Data](http://projects.spring.io/spring-data/)
+- [Spring Security](https://projects.spring.io/spring-security/)
+- [Project Lombok](https://projectlombok.org/)
+- [Hibernate Validator](http://hibernate.org/validator/)
+- [Hibernate](http://hibernate.org/)/[JPA](http://www.oracle.com/technetwork/java/javaee/tech/persistence-jsp-140049.html)
+- [Orika](https://orika-mapper.github.io/orika-docs/)
+- [Junit 4](http://junit.org/junit4/)
+- [Mockito](http://site.mockito.org/)
 - [Maven](https://maven.apache.org/)
 - [IntelliJ](https://www.jetbrains.com/idea/)
