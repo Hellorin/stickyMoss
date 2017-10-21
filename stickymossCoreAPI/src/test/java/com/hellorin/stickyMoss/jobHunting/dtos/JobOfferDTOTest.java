@@ -39,7 +39,7 @@ public class JobOfferDTOTest {
 
     @Test
     public void testSerialize() throws Exception {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2017, 10, 15);
         JobOfferDTO dto = new JobOfferDTO();
         dto.setId(1L);
         dto.setDateDiscovered(date);
