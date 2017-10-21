@@ -6,7 +6,6 @@ import com.hellorin.stickyMoss.facade.security.configuration.CustomWebSecurityCo
 import com.hellorin.stickyMoss.facade.security.configuration.WebSecurityConfiguration;
 import com.hellorin.stickyMoss.facade.validation.configuration.ValidatorsConfiguration;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
-import com.hellorin.stickyMoss.jobHunting.dtos.ApplicantDTO;
 import com.hellorin.stickyMoss.jobHunting.repositories.ApplicantRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +13,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -65,7 +61,7 @@ public class ApplicantRestFacadeTest extends AbstractRestControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
+    /*@Test
     @WithMockUser(roles="ADMIN")
     public void testNewApplicant() throws Exception {
         ApplicantDTO applicantDTO = new ApplicantDTO();
@@ -79,9 +75,9 @@ public class ApplicantRestFacadeTest extends AbstractRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content(json(applicantDTO)))
                 .andExpect(status().isCreated());
-    }
+    }*/
 
-    @Test
+    /*@Test
     @WithMockUser(roles="ADMIN")
     public void testDeleteApplicantNotExisting() throws Exception {
         mvc.perform(
@@ -95,5 +91,5 @@ public class ApplicantRestFacadeTest extends AbstractRestControllerTest {
         mvc.perform(
                 MockMvcRequestBuilders.delete(baseUrl + "/" + applicant.getId())
         ).andExpect(status().isOk());
-    }
+    }*/
 }
