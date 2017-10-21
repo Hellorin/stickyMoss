@@ -1,22 +1,20 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
-import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.facade.mappers.StickyMossOrikaMapper;
+import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.dtos.ApplicantDTO;
 import com.hellorin.stickyMoss.jobHunting.services.IApplicantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.annotation.security.PermitAll;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.net.URI;
 
 /**
  * Created by hellorin on 04.07.17.
@@ -25,6 +23,7 @@ import java.net.URI;
 @Retention(RetentionPolicy.RUNTIME)
 @RestController
 @RequestMapping
+@PermitAll
 @interface ApplicantRestFacadeController {
     @AliasFor(annotation = RequestMapping.class)
     String[] value () default {"api/stickyMoss/applicant"};
@@ -39,7 +38,7 @@ public class ApplicantRestFacade {
     @Autowired
     private StickyMossOrikaMapper mapper;
 
-    @PutMapping( consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    /*@PutMapping( consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     @ResponseBody
     private ResponseEntity<?> newApplicant(@RequestBody final ApplicantDTO applicantDTO) {
         Applicant applicant = mapper.getFacade().map(applicantDTO, Applicant.class);
@@ -51,7 +50,7 @@ public class ApplicantRestFacade {
                 .buildAndExpand(applicantCreated.getId()).toUri();
 
         return ResponseEntity.created(location).build();
-    }
+    }*/
 
     @GetMapping(path = "{id}",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
@@ -62,9 +61,9 @@ public class ApplicantRestFacade {
         return ResponseEntity.ok(mapper.getFacade().map(returnedApplicant, ApplicantDTO.class));
     }
 
-    @DeleteMapping(path = "{id}")
+    /*@DeleteMapping(path = "{id}")
     @ResponseStatus(HttpStatus.OK)
     private void deleteApplicant (@PathVariable final Long id) {
         applicantService.deleteApplicant(id);
-    }
+    }*/
 }
