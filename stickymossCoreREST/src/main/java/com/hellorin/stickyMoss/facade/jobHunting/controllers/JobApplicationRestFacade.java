@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.annotation.security.PermitAll;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,6 +32,7 @@ import java.net.URI;
 @Retention(RetentionPolicy.RUNTIME)
 @RestController
 @RequestMapping
+@PermitAll
 @interface JobApplicationRestFacadeController {
     @AliasFor(annotation = RequestMapping.class)
     String[] value () default {"api/stickyMoss/jobApplication"};
