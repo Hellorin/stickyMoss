@@ -1,17 +1,16 @@
 package com.hellorin.stickyMoss.facade.jobHunting.controllers;
 
-import com.hellorin.stickyMoss.facade.mappers.StickyMossMapperFacade;
 import com.hellorin.stickyMoss.facade.mappers.StickyMossOrikaMapper;
 import com.hellorin.stickyMoss.jobHunting.domain.JobOffer;
 import com.hellorin.stickyMoss.jobHunting.dtos.JobOfferDTO;
 import com.hellorin.stickyMoss.jobHunting.services.JobOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.annotation.security.PermitAll;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,6 +24,7 @@ import java.net.URI;
 @Retention(RetentionPolicy.RUNTIME)
 @RestController
 @RequestMapping
+@PermitAll
 @interface JobOfferRestFacadeController {
     @AliasFor(annotation = RequestMapping.class)
     String[] value () default {"api/stickyMoss/jobOffer"};
