@@ -47,6 +47,11 @@ public class JobApplication {
     @Getter
     private CV cv;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @Setter
+    @Getter
+    private JobOffer jobOffer;
+
     private JobApplication(final Applicant applicant) {
         this.applicant = applicant;
     }
