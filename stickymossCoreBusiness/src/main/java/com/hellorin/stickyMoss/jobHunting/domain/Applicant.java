@@ -1,129 +1,52 @@
 package com.hellorin.stickyMoss.jobHunting.domain;
 
-import lombok.*;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.hellorin.stickyMoss.user.domain.ApplicationUser;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created by hellorin on 23.06.17.
  */
 @Entity
-@Table(name = "APPLICANTS")
+@DiscriminatorValue("applicant")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(exclude = {"version", "id"})
-public class Applicant implements UserDetails {
-    @Version
-    private Long version;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "applicantIdGen")
-    @SequenceGenerator(name = "applicantIdGen",
-            sequenceName = "APPLICANT_SEQ")
-    @Getter
-    private Long id;
-
-    @NonNull
-    @NotNull
-    @NotEmpty
-    private String firstname;
-
-    @NonNull
-    @NotNull
-    @NotEmpty
-    private String lastname;
-
-    @Setter
-    @NonNull
-    @NotNull
-    @NotEmpty
-    private String encPassword;
-
-    @Getter
-    @Setter
-    @NonNull
-    @NotNull
-    @NotEmpty
-    @Email
-    private String email;
+public class Applicant extends ApplicationUser {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter
+    @BatchSize(size = 5)
     private List<JobApplication> jobApplications = new ArrayList<>(0);
 
     public Applicant(final String firstname, final String lastname, final String encPassword, final String email) {
-        this.firstname = firstname.toLowerCase();
-        this.lastname = lastname.toLowerCase();
-        this.encPassword = encPassword;
-        this.email = email;
-    }
-
-    public void setFirstname(final String firstname) {
-        this.firstname = firstname.toLowerCase();
-    }
-
-    public String getFirstname() {
-        return uppercaseFirstLetter(this.firstname);
-    }
-
-    public void setLastname(final String lastname) {
-        this.lastname = lastname.toLowerCase();
-    }
-
-    public String getLastname() {
-        return uppercaseFirstLetter(this.lastname);
+        super(firstname, lastname, encPassword, email);
     }
 
     public void addJobApplication(final JobApplication jobApplication) {
         jobApplications.add(jobApplication);
     }
 
-    private String uppercaseFirstLetter(final String word) {
-        return word.substring(0, 1).toUpperCase() + word.substring(1);
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("USER"));
-    }
-
-    @Override
-    public String getPassword() {
-        return encPassword;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public int hashCode() {
+        int jobApplicationsHash = Objects.hash(jobApplications.stream()
+                .map(Object::hashCode)
+                .collect(Collectors.toList())
+                .toArray());
+        return super.hashCode() + 89 * jobApplicationsHash;
     }
 }

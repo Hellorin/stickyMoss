@@ -18,12 +18,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @SpringBootApplication
 @EntityScan(basePackages = {
+        "com.hellorin.stickyMoss.user.domain",
         "com.hellorin.stickyMoss.jobHunting.domain",
         "com.hellorin.stickyMoss.documents.domain",
         "com.hellorin.stickyMoss.companies.domain",
         "com.hellorin.stickyMoss.classification.domain",
 })
 @EnableJpaRepositories(basePackages = {
+        "com.hellorin.stickyMoss.user.repositories",
         "com.hellorin.stickyMoss.jobHunting.repositories",
         "com.hellorin.stickyMoss.documents.repositories",
 })
@@ -43,7 +45,6 @@ public class TestStickyMossConfiguration extends WebMvcConfigurerAdapter {
     public ApplicantRestFacade applicantRestFacade() {
         return new ApplicantRestFacade();
     }
-
 
 }
 

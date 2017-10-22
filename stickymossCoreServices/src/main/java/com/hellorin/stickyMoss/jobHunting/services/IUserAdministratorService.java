@@ -1,5 +1,6 @@
 package com.hellorin.stickyMoss.jobHunting.services;
 
+import com.hellorin.stickyMoss.user.domain.ApplicationUser;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
@@ -12,11 +13,16 @@ import javax.validation.Valid;
 @Validated
 @Secured("ROLE_ADMIN")
 public interface IUserAdministratorService {
-    default void addUser() { throw new UnsupportedOperationException(); }
+    ApplicationUser addUser(@Valid ApplicationUser user);
 
-    default void promoteUser() { throw new UnsupportedOperationException(); }
+    ApplicationUser promoteUser(@Valid Long id);
+
+    ApplicationUser enableAccount(@Valid Long id);
+
+    ApplicationUser disableAccount(@Valid Long id);
 
     Applicant addApplicant(@Valid Applicant applicant);
 
     void deleteApplicant(@Valid Long id);
+
 }
