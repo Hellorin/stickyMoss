@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,7 +69,7 @@ public class ApplicationUser implements UserDetails {
             joinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") },
             inverseJoinColumns = { @JoinColumn(name = "role_name", referencedColumnName="role_name") }
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>(0);
 
     public ApplicationUser(final String firstname, final String lastname, final String encPassword, final String email) {
         this.firstname = firstname.toLowerCase();
