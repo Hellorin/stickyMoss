@@ -18,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 import java.util.Optional;
 
@@ -40,6 +42,20 @@ public class ApplicantServiceTest {
         public IApplicantService applicantService() {
             return new ApplicantService();
         }
+
+        @Bean
+        public LocalValidatorFactoryBean validator() {
+            final LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+            return localValidatorFactoryBean;
+        }
+
+        @Bean
+        public MethodValidationPostProcessor methodValidationPostProcessor() {
+            final MethodValidationPostProcessor methodValidationPostProcessor = new MethodValidationPostProcessor();
+            methodValidationPostProcessor.setValidator(validator());
+
+            return methodValidationPostProcessor;
+        }
     }
 
     @Autowired
@@ -55,56 +71,6 @@ public class ApplicantServiceTest {
     public void setup() {
         Mockito.reset(applicantRepository);
     }
-
-    /*@Test(expected = AuthenticationCredentialsNotFoundException.class)
-    public void testAddApplicantWithoutAuthentification() {
-        // Given
-        Applicant newApplicant = mock(Applicant.class);
-
-        // When
-        Applicant observedReturnedApplicant = applicantService.addApplicant(newApplicant);
-    }
-
-    @Test(expected = AccessDeniedException.class)
-    @WithMockUser(roles={"USER"})
-    public void testAddApplicantWithUnauthorizedRole() {
-        // Given
-        Applicant newApplicant = mock(Applicant.class);
-
-        // When
-        Applicant observedReturnedApplicant = applicantService.addApplicant(newApplicant);
-    }*/
-
-    /*@Test
-    @WithMockUser(roles={"ADMIN"})
-    public void testAddApplicant() {
-        // Given
-        Applicant newApplicant = mock(Applicant.class);
-        Applicant returnedApplicant = mock(Applicant.class);
-
-        for (Applicant applicant : Arrays.asList(newApplicant, returnedApplicant)) {
-            when(applicant.getFirstname()).thenReturn("Jim");
-            when(applicant.getLastname()).thenReturn("Nguyen");
-            when(applicant.getEmail()).thenReturn("email@email.com");
-        }
-        when(newApplicant.getId()).thenReturn(null);
-        when(returnedApplicant.getId()).thenReturn(1L);
-
-        when(applicantRepository.save(newApplicant))
-                .thenReturn(returnedApplicant);
-
-        // When
-        Applicant observedReturnedApplicant = applicantService.addApplicant(newApplicant);
-
-        // Then
-        assertNull(newApplicant.getId());
-        assertNotNull(observedReturnedApplicant.getId());
-        assertEquals(newApplicant.getFirstname(), observedReturnedApplicant.getFirstname());
-        assertEquals(newApplicant.getLastname(), observedReturnedApplicant.getLastname());
-        assertEquals(newApplicant.getEmail(), observedReturnedApplicant.getEmail());
-
-        verify(applicantRepository, times(1)).save(newApplicant);
-    }*/
 
     @Test
     public void testGetExistingApplicantById() {
@@ -130,28 +96,6 @@ public class ApplicantServiceTest {
         verify(applicantRepository, times(1)).findOne(1L);
     }
 
-    /*@Test(expected = AccessDeniedException.class)
-    @WithMockUser(roles={"USER"})
-    public void testDeleteExistingApplicantByIdWithWrongRole() {
-        // When
-        applicantService.deleteApplicant(1L);
-    }*/
-
-    /*@Test
-    @WithMockUser(roles={"ADMIN"})
-    public void testDeleteExistingApplicantById() {
-        // Given
-        Applicant applicant = mock(Applicant.class);
-        when(applicant.getId()).thenReturn(1L);
-        when(applicantRepository.findOne(1L)).thenReturn(applicant);
-
-        // When
-        applicantService.deleteApplicant(1L);
-
-        // Then
-        verify(applicantRepository, times(1)).findOne(1L);
-    }*/
-
     @Test(expected = ApplicantNotFoundException.class)
     public void testGetInexistingApplicantById() {
         // Given
@@ -170,20 +114,7 @@ public class ApplicantServiceTest {
 
         // Then
         verify(applicantRepository, times(1)).findOne(1L);
-
     }
-
-    /*@Test(expected = ApplicantNotFoundException.class)
-    @WithMockUser(roles={"ADMIN"})
-    public void testDeleteInexistingApplicantById() {
-        // Given
-        Applicant applicant = mock(Applicant.class);
-        when(applicant.getId()).thenReturn(1L);
-        when(applicantRepository.findOne(1L)).thenReturn(null);
-
-        // When
-        applicantService.deleteApplicant(1L);
-    }*/
 
     @Test
     public void testLoadUserByUsername() {

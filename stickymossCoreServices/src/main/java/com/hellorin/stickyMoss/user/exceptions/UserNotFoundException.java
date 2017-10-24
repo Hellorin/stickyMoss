@@ -1,4 +1,6 @@
-package com.hellorin.stickyMoss.jobHunting.exceptions;
+package com.hellorin.stickyMoss.user.exceptions;
+
+import com.hellorin.stickyMoss.jobHunting.exceptions.ApplicantNotFoundException;
 
 /**
  * Created by hellorin on 21.10.17.

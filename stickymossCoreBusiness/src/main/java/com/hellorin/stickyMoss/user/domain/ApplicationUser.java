@@ -8,9 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 @DiscriminatorColumn(name="user_type")
 @DiscriminatorValue("user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(exclude = {"version", "id"})
+@EqualsAndHashCode(exclude = {"version", "id", "roles"})
 public class ApplicationUser implements UserDetails {
     @Version
     private Long version;
@@ -76,6 +78,9 @@ public class ApplicationUser implements UserDetails {
         this.lastname = lastname.toLowerCase();
         this.encPassword = encPassword;
         this.email = email;
+        this.roles = Arrays.asList(Role.USER).stream()
+                .map(Role::new)
+                .collect(Collectors.toSet());
     }
 
     public void setFirstname(final String firstname) {
@@ -141,5 +146,21 @@ public class ApplicationUser implements UserDetails {
 
     public void disableUser() {
         this.enable = false;
+    }
+
+    public boolean hasRole(final Predicate<String> roleFilter) {
+        return this.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(roleFilter);
+    }
+
+    public void promote() {
+        this.roles.clear();
+        this.roles.add(new Role(Role.ADMIN));
+    }
+
+    public void demote() {
+        this.roles.clear();
+        this.roles.add(new Role(Role.USER));
     }
 }

@@ -19,6 +19,10 @@ import javax.persistence.Table;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Role {
 
+    public static SimpleGrantedAuthority USER = new SimpleGrantedAuthority("USER");
+
+    public static SimpleGrantedAuthority ADMIN = new SimpleGrantedAuthority("ADMIN");
+
     @Id
     @Column(name = "role_name")
     @NonNull

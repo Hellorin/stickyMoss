@@ -47,6 +47,6 @@ public class Applicant extends ApplicationUser {
                 .map(Object::hashCode)
                 .collect(Collectors.toList())
                 .toArray());
-        return super.hashCode() + 89 * jobApplicationsHash;
+        return super.hashCode() + 89 * jobApplicationsHash + 89 * Objects.hashCode("APPLICANT");
     }
 }

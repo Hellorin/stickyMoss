@@ -21,19 +21,21 @@ public class ApplicantService implements IApplicantService {
     static Logger logger = Logger.getLogger(ApplicantService.class.getName());
 
     @Autowired
-    ApplicantRepository applicantRepository;
+    protected ApplicantRepository applicantRepository;
 
     @Override
     public Applicant getApplicant(final Long id) {
         Optional<Applicant> applicant = Optional.ofNullable(applicantRepository.findOne(id));
 
-        return applicant.orElseThrow(() -> new ApplicantNotFoundException("Applicant not found with id " + id));
+        return applicant
+                .orElseThrow(() -> new ApplicantNotFoundException("Applicant not found with id " + id));
     }
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         Optional<Applicant> applicant = applicantRepository.findByEmail(email);
 
-        return applicant.orElseThrow(() -> new UsernameNotFoundException("Cannot find user with email " + email));
+        return applicant
+                .orElseThrow(() -> new UsernameNotFoundException("Cannot find user with email " + email));
     }
 }

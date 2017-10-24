@@ -1,4 +1,4 @@
-package com.hellorin.stickyMoss.jobHunting.services;
+package com.hellorin.stickyMoss.user.services;
 
 import com.hellorin.stickyMoss.user.domain.ApplicationUser;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
@@ -6,6 +6,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by hellorin on 21.10.17.
@@ -15,14 +16,15 @@ import javax.validation.Valid;
 public interface IUserAdministratorService {
     ApplicationUser addUser(@Valid ApplicationUser user);
 
-    ApplicationUser promoteUser(@Valid Long id);
+    boolean promoteUser(@Valid @NotNull Long id);
 
-    ApplicationUser enableAccount(@Valid Long id);
+    boolean forcePromoteUser(@Valid @NotNull Long id);
 
-    ApplicationUser disableAccount(@Valid Long id);
+    boolean enableAccount(@Valid @NotNull Long id);
+
+    boolean disableAccount(@Valid @NotNull Long id);
 
     Applicant addApplicant(@Valid Applicant applicant);
 
-    void deleteApplicant(@Valid Long id);
-
+    void deleteApplicant(@Valid @NotNull Long id);
 }

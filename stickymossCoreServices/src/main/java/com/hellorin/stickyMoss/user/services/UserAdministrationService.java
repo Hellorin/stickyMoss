@@ -1,10 +1,12 @@
-package com.hellorin.stickyMoss.jobHunting.services;
+package com.hellorin.stickyMoss.user.services;
 
-import com.hellorin.stickyMoss.user.domain.ApplicationUser;
 import com.hellorin.stickyMoss.jobHunting.domain.Applicant;
 import com.hellorin.stickyMoss.jobHunting.exceptions.ApplicantNotFoundException;
-import com.hellorin.stickyMoss.jobHunting.exceptions.UserNotFoundException;
+import com.hellorin.stickyMoss.jobHunting.services.ApplicantService;
 import com.hellorin.stickyMoss.password.services.PasswordService;
+import com.hellorin.stickyMoss.user.domain.ApplicationUser;
+import com.hellorin.stickyMoss.user.exceptions.CannotPromoteUserException;
+import com.hellorin.stickyMoss.user.exceptions.UserNotFoundException;
 import com.hellorin.stickyMoss.user.repositories.ApplicationUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Created by hellorin on 21.10.17.
@@ -44,16 +47,49 @@ public class UserAdministrationService extends ApplicantService implements IUser
 
     @Override
     public ApplicationUser addUser(final ApplicationUser user) {
+        user.setEncPassword(passwordService.encode(user.getPassword()));
+
         return applicationUserRepository.save(user);
     }
 
-    @Override
-    public ApplicationUser promoteUser(final Long id) {
-        return applicationUserRepository.getOne(id);
+    private boolean abstractPromoteUser(final Long id,
+                                        final Predicate<ApplicationUser> isAlreadyApplied,
+                                        final Predicate<ApplicationUser> filter) {
+        Optional<ApplicationUser> user = Optional.ofNullable(applicationUserRepository.findOne(id));
+
+        if (user.isPresent()) {
+            ApplicationUser appUser = user.filter(filter)
+                .orElseThrow(() -> new CannotPromoteUserException());
+
+            if (!isAlreadyApplied.test(appUser)) {
+                appUser.promote();
+
+                return true;
+            } else {
+                return false;
+            }
+
+        } else {
+            throw new UserNotFoundException("User not found with id " + id);
+        }
     }
 
     @Override
-    public ApplicationUser enableAccount(final Long id) {
+    public boolean promoteUser(final Long id) {
+        return abstractPromoteUser(id,
+                user -> user.hasRole(role -> role.equals("ADMIN")),
+                u -> ! (u instanceof Applicant));
+    }
+
+    @Override
+    public boolean forcePromoteUser(final Long id) {
+        return abstractPromoteUser(id,
+                user -> user.hasRole(role -> role.equals("ADMIN")),
+                u -> true);
+    }
+
+    @Override
+    public boolean enableAccount(final Long id) {
         Optional<ApplicationUser> opUser = Optional.ofNullable(applicationUserRepository.findOne(id));
 
         ApplicationUser user =
@@ -61,11 +97,11 @@ public class UserAdministrationService extends ApplicantService implements IUser
 
         user.enableUser();
 
-        return user;
+        return true;
     }
 
     @Override
-    public ApplicationUser disableAccount(final Long id) {
+    public boolean disableAccount(final Long id) {
         Optional<ApplicationUser> opUser = Optional.ofNullable(applicationUserRepository.findOne(id));
 
         ApplicationUser user =
@@ -73,7 +109,7 @@ public class UserAdministrationService extends ApplicantService implements IUser
 
         user.disableUser();
 
-        return user;
+        return true;
     }
 
 }
