@@ -18,7 +18,6 @@
         <module>stickyMossCoreREST</module>
 		<module>stickyMossCoreAPI</module>
         <module>stickyMossApp</module>
-    <module>stickyMossTest</module>
   </modules>
 
     <properties>
